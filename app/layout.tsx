@@ -14,19 +14,29 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className="min-h-screen bg-gray-50 text-gray-900 antialiased">
-        <header className="border-b border-gray-200 bg-white">
-          <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-            <Link href="/" className="text-lg font-bold text-blue-700">
+      <body className="min-h-screen bg-stone-50 text-stone-900 antialiased">
+        <header className="bg-emerald-700 shadow-md">
+          <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+            <Link href="/" className="text-lg font-bold text-white">
               교직논술 연습
             </Link>
-            <div className="flex gap-6 text-sm">
-              <Link href="/exams" className="hover:text-blue-600">기출 열람</Link>
-              <Link href="/practice" className="hover:text-blue-600">모의 연습</Link>
+            <div className="flex gap-8 text-sm font-medium">
+              <Link
+                href="/exams"
+                className="rounded-lg px-3 py-2 text-emerald-100 transition hover:bg-emerald-600 hover:text-white"
+              >
+                기출 열람
+              </Link>
+              <Link
+                href="/practice"
+                className="rounded-lg px-3 py-2 text-emerald-100 transition hover:bg-emerald-600 hover:text-white"
+              >
+                모의 연습
+              </Link>
             </div>
           </nav>
         </header>
-        <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+        <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
       </body>
     </html>
   );
