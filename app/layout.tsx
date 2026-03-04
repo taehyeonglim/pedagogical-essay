@@ -43,6 +43,17 @@ export default function RootLayout({
           </nav>
         </header>
         <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+        <footer className="border-t border-stone-200 bg-stone-100">
+          <div className="mx-auto flex max-w-6xl flex-col items-center gap-1 px-4 py-6 text-xs text-stone-400">
+            <p>
+              전주교육대학교 초등교육과 임태형 교수 개발 ·{" "}
+              <a href="mailto:thlim@jnue.kr" className="underline underline-offset-2 transition hover:text-stone-600">
+                thlim@jnue.kr
+              </a>
+            </p>
+            <p>&copy; {new Date().getFullYear()} Jeonju National University of Education. All rights reserved.</p>
+          </div>
+        </footer>
       </body>
     </html>
   );
