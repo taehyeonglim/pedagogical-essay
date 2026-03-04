@@ -1,0 +1,54 @@
+{
+  "examYears": [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
+  "totalExams": 12,
+  "topicCategories": {
+    "학생안전·생활지도": [2015],
+    "수업·교수학습": [2016, 2017, 2024, 2025],
+    "학교조직·경영": [2018, 2020],
+    "교육과정·평가": [2019, 2022, 2023, 2026],
+    "교직전문성·윤리": [2021]
+  },
+  "topicFrequency": [
+    { "topic": "수업·교수학습", "count": 4, "percentage": 33.3 },
+    { "topic": "교육과정·평가", "count": 4, "percentage": 33.3 },
+    { "topic": "학교조직·경영", "count": 2, "percentage": 16.7 },
+    { "topic": "학생안전·생활지도", "count": 1, "percentage": 8.3 },
+    { "topic": "교직전문성·윤리", "count": 1, "percentage": 8.3 }
+  ],
+  "questionStructure": {
+    "commonFormat": "대화형 제시문 + 하위 문항",
+    "typicalSubQuestions": { "min": 2, "max": 4, "average": 3 },
+    "presentationStyle": {
+      "dialogue": { "count": 10, "percentage": 83.3, "years": [2015, 2016, 2017, 2018, 2019, 2022, 2023, 2024, 2025, 2026] },
+      "report": { "count": 2, "percentage": 16.7, "years": [2020, 2021] }
+    }
+  },
+  "scoringSystem": {
+    "totalScore": 20,
+    "breakdown": {
+      "content": { "score": 15, "label": "논술의 내용" },
+      "structure": { "score": 5, "label": "논술의 체계/체제" }
+    },
+    "structureDetail": {
+      "logicalCoherence": { "score": 3, "label": "글의 논리적 체계성" },
+      "spelling": { "score": "1-2", "label": "맞춤법 및 원고지 작성법" },
+      "length": { "score": "0-1", "label": "분량" }
+    }
+  },
+  "wordLimit": {
+    "early": { "years": [2015, 2016, 2017, 2018, 2019, 2020], "format": "원고지 1,200자", "penaltyRange": "1,100자 이하 또는 1,200자 초과 시 감점" },
+    "recent": { "years": [2021, 2022, 2023, 2024, 2025, 2026], "format": "답안지 2매 이내", "note": "원고지에서 답안지 형태로 변경" }
+  },
+  "writingGuidelines": [
+    "어법과 원고지 작성법에 맞게 서술",
+    "글의 체계를 논리적으로 짜임새 있게 구성",
+    "글의 명료성, 타당성, 일관성을 고려하여 서술"
+  ],
+  "keyPatterns": [
+    "대화형 제시문에서 문제 상황을 도출하는 형식이 주류",
+    "하위 문항별 배점이 명시되어 채점 기준이 투명",
+    "수업·교수학습과 교육과정·평가 주제가 전체의 66.6% 차지",
+    "2021학년도부터 원고지 1200자에서 답안지 2매로 형식 변경",
+    "논술의 내용(15점)과 체계(5점)으로 배점이 일관됨"
+  ]
+}
