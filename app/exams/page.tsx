@@ -5,20 +5,18 @@ import { useState, useEffect } from "react";
 interface ExamSummary {
   year: number;
   topic: string;
-  subTopics: string[];
-  rawMd: string;
 }
 
 export default function ExamsPage() {
   const [exams, setExams] = useState<ExamSummary[]>([]);
-  const [selected, setSelected] = useState<ExamSummary | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/exams")
       .then((r) => r.json())
       .then((data) => {
-        setExams(data);
+        setExams(data.map((e: ExamSummary) => ({ year: e.year, topic: e.topic })));
         setLoading(false);
       });
   }, []);
@@ -35,20 +33,20 @@ export default function ExamsPage() {
         {exams.map((exam) => (
           <button
             key={exam.year}
-            onClick={() => setSelected(exam)}
+            onClick={() => setSelectedYear(exam.year)}
             className={`rounded-lg border-2 p-4 text-left transition ${
-              selected?.year === exam.year
+              selectedYear === exam.year
                 ? "border-emerald-500 bg-emerald-600 text-white shadow-md"
                 : "border-stone-200 bg-white text-stone-800 hover:border-emerald-300 hover:bg-emerald-50"
             }`}
           >
             <div className="text-lg font-semibold">
-              {selected?.year === exam.year ? "✓ " : ""}
+              {selectedYear === exam.year ? "✓ " : ""}
               {exam.year}학년도
             </div>
             <div
               className={`mt-1 text-xs line-clamp-2 ${
-                selected?.year === exam.year ? "text-emerald-100" : "text-stone-500"
+                selectedYear === exam.year ? "text-emerald-100" : "text-stone-500"
               }`}
             >
               {exam.topic}
@@ -57,12 +55,28 @@ export default function ExamsPage() {
         ))}
       </div>
 
-      {selected && (
-        <div className="rounded-xl border border-stone-200 bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-stone-800">{selected.year}학년도 교직논술</h2>
-          <div className="mt-2 text-sm font-medium text-emerald-600">{selected.topic}</div>
-          <div className="prose prose-sm prose-stone mt-6 max-w-none whitespace-pre-wrap leading-relaxed text-stone-700">
-            {selected.rawMd}
+      {selectedYear && (
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-stone-800">
+              {selectedYear}학년도 교직논술
+            </h2>
+            <a
+              href={`/exams/${selectedYear}.pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700"
+            >
+              새 탭에서 열기
+            </a>
+          </div>
+          <div className="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm">
+            <iframe
+              key={selectedYear}
+              src={`/exams/${selectedYear}.pdf`}
+              className="h-[75vh] w-full"
+              title={`${selectedYear}학년도 교직논술`}
+            />
           </div>
         </div>
       )}
