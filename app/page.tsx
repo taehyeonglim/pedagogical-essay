@@ -12,7 +12,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="grid w-full max-w-3xl gap-6 sm:grid-cols-2">
+      <div className="grid w-full max-w-4xl gap-6 sm:grid-cols-3">
         <Link
           href="/exams"
           className="group rounded-xl border-2 border-stone-200 bg-white p-8 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50 hover:shadow-md"
@@ -36,6 +36,19 @@ export default function Home() {
           </h2>
           <p className="mt-2 text-sm text-stone-500">
             AI가 출제한 모의 문제로 논술을 작성하고 즉시 채점받습니다.
+          </p>
+        </Link>
+
+        <Link
+          href="/analysis"
+          className="group rounded-xl border-2 border-stone-200 bg-white p-8 shadow-sm transition hover:border-violet-400 hover:bg-violet-50 hover:shadow-md"
+        >
+          <div className="mb-3 text-3xl">📊</div>
+          <h2 className="text-xl font-semibold text-stone-800 group-hover:text-violet-700">
+            출제 패턴 분석
+          </h2>
+          <p className="mt-2 text-sm text-stone-500">
+            영역별·이론별 출제 빈도와 트렌드를 종합 분석합니다.
           </p>
         </Link>
       </div>

@@ -33,6 +33,12 @@ export default function RootLayout({
               >
                 모의 연습
               </Link>
+              <Link
+                href="/analysis"
+                className="rounded-lg px-3 py-2 text-emerald-100 transition hover:bg-emerald-600 hover:text-white"
+              >
+                출제 패턴 분석
+              </Link>
             </div>
           </nav>
         </header>

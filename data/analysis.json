@@ -1,0 +1,419 @@
+{
+  "domains": [
+    {
+      "id": "curriculum",
+      "name": "교육과정",
+      "color": "emerald",
+      "years": [2017, 2018, 2019, 2021, 2022, 2024],
+      "theories": [
+        {
+          "name": "2015 개정 교육과정 핵심역량",
+          "years": [2017, 2019, 2021],
+          "description": "핵심역량(자기관리, 지식정보처리, 창의적 사고, 심미적 감성, 의사소통, 공동체 역량) 중심으로 교과 교육과정을 재구조화하고, 핵심개념을 중심으로 학습 내용을 구조화하며 교과 간 통합을 강조한다.",
+          "references": [
+            { "title": "교육부: 2015 개정 교육과정 총론", "url": "https://ncic.re.kr/mobile.kri.org4.inventoryList.do" },
+            { "title": "위키백과: 대한민국의 교육과정", "url": "https://ko.wikipedia.org/wiki/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%EC%9D%98_%EA%B5%90%EC%9C%A1%EA%B3%BC%EC%A0%95" }
+          ]
+        },
+        {
+          "name": "교육과정 유형 (공식/잠재/영)",
+          "years": [2018],
+          "description": "공식적 교육과정(문서화된 의도된 교육과정), 잠재적 교육과정(학교 문화·분위기에서 비의도적으로 학습되는 것), 영 교육과정(가르치지 않음으로써 배제되는 것)을 구분하여 교육과정 운영의 다층성을 이해한다.",
+          "references": [
+            { "title": "위키백과: 잠재적 교육과정", "url": "https://ko.wikipedia.org/wiki/%EC%9E%A0%EC%9E%AC%EC%A0%81_%EA%B5%90%EC%9C%A1%EA%B3%BC%EC%A0%95" }
+          ]
+        },
+        {
+          "name": "교육과정 3단계 개발 모형",
+          "years": [2021, 2022],
+          "description": "국가 수준 교육과정 → 지역 수준 교육과정 → 학교 수준 교육과정으로 이어지는 3단계 교육과정 개발 체제로, 각 수준에서의 자율성과 책임을 강조한다. 학교는 지역·학생 특성을 반영하여 자체 교육과정을 편성·운영한다.",
+          "references": [
+            { "title": "국가교육과정정보센터(NCIC)", "url": "https://ncic.re.kr" },
+            { "title": "위키백과: 대한민국의 교육과정", "url": "https://ko.wikipedia.org/wiki/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%EC%9D%98_%EA%B5%90%EC%9C%A1%EA%B3%BC%EC%A0%95" }
+          ]
+        },
+        {
+          "name": "개념 기반 교육과정 설계",
+          "years": [2024],
+          "description": "Erickson의 개념 기반 교육과정(Concept-Based Curriculum)으로, 핵심 개념(macro concept)과 일반화를 중심으로 교과 간 통합 단원을 설계한다. 사실적 지식을 넘어 개념적 이해와 전이 가능한 학습을 목표로 한다.",
+          "references": [
+            { "title": "위키백과: 개념 기반 교육과정", "url": "https://en.wikipedia.org/wiki/Concept-based_curriculum" },
+            { "title": "에듀넷: 2022 개정 교육과정과 개념 기반 설계", "url": "https://www.edunet.net" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "teaching",
+      "name": "교수학습",
+      "color": "blue",
+      "years": [2016, 2017, 2021, 2024, 2025],
+      "theories": [
+        {
+          "name": "행동주의 (조작적 조건화)",
+          "years": [2016],
+          "description": "Skinner의 조작적 조건화 이론으로, 강화(정적·부적 강화)와 벌을 통해 학습자의 행동을 형성·수정한다. 즉각적이고 구체적인 강화가 효과적이며, 교실에서의 행동 수정 전략의 이론적 기반이 된다.",
+          "references": [
+            { "title": "위키백과: 조작적 조건화", "url": "https://ko.wikipedia.org/wiki/%EC%A1%B0%EC%9E%91%EC%A0%81_%EC%A1%B0%EA%B1%B4%ED%99%94" },
+            { "title": "위키백과: 버러스 프레더릭 스키너", "url": "https://ko.wikipedia.org/wiki/%EB%B2%84%EB%9F%AC%EC%8A%A4_%ED%94%84%EB%A0%88%EB%8D%94%EB%A6%AD_%EC%8A%A4%ED%82%A4%EB%84%88" }
+          ]
+        },
+        {
+          "name": "사회학습이론 (반두라)",
+          "years": [2016],
+          "description": "Bandura의 사회학습이론(관찰학습)으로, 모델링·관찰·모방을 통해 학습이 이루어진다. 자기효능감 개념을 포함하며, 교사의 시범과 또래 모델링이 학습에 미치는 영향을 설명한다.",
+          "references": [
+            { "title": "위키백과: 앨버트 밴듀라", "url": "https://ko.wikipedia.org/wiki/%EC%95%A8%EB%B2%84%ED%8A%B8_%EB%B0%B4%EB%93%80%EB%9D%BC" },
+            { "title": "위키백과: 사회학습이론", "url": "https://ko.wikipedia.org/wiki/%EC%82%AC%ED%9A%8C%ED%95%99%EC%8A%B5%EC%9D%B4%EB%A1%A0" }
+          ]
+        },
+        {
+          "name": "구성주의 학습이론",
+          "years": [2017],
+          "description": "학습자가 능동적으로 지식을 구성한다는 이론으로, Piaget의 인지적 구성주의와 Vygotsky의 사회적 구성주의를 포함한다. 학생 중심 수업, 탐구학습, 프로젝트 학습의 이론적 토대가 된다.",
+          "references": [
+            { "title": "위키백과: 구성주의 (교육학)", "url": "https://ko.wikipedia.org/wiki/%EA%B5%AC%EC%84%B1%EC%A3%BC%EC%9D%98_(%EA%B5%90%EC%9C%A1%ED%95%99)" },
+            { "title": "에듀넷: 구성주의와 수업", "url": "https://www.edunet.net" }
+          ]
+        },
+        {
+          "name": "협동학습 (Jigsaw, STAD)",
+          "years": [2017],
+          "description": "소집단 내 긍정적 상호의존성을 기반으로 한 학습 방법이다. STAD(성취과제 분담)는 팀 보상 구조로 개인 책무성을 강화하고, Jigsaw(직소)는 전문가 집단 활동 후 원래 집단에서 상호 교수하는 구조이다.",
+          "references": [
+            { "title": "위키백과: 협동학습", "url": "https://ko.wikipedia.org/wiki/%ED%98%91%EB%8F%99%ED%95%99%EC%8A%B5" },
+            { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "assessment",
+      "name": "교육평가",
+      "color": "violet",
+      "years": [2017, 2024, 2026],
+      "theories": [
+        {
+          "name": "정의적 영역 평가",
+          "years": [2017],
+          "description": "Bloom의 교육목표 분류학 중 정의적 영역(태도, 흥미, 가치관, 자아개념 등)에 대한 평가이다. 자기보고식 검사, 관찰법, 면담법 등을 활용하며, 2015 개정 교육과정에서 인성 함양과 연계하여 강조된다.",
+          "references": [
+            { "title": "에듀넷: 정의적 특성 평가", "url": "https://www.edunet.net" }
+          ]
+        },
+        {
+          "name": "포트폴리오 평가",
+          "years": [2024],
+          "description": "학생의 학습 과정과 결과물을 체계적으로 수집·정리하여 성장과 발달을 종합적으로 평가하는 방법이다. 과정 중심 평가를 실현하고, 학생의 자기 성찰과 메타인지를 촉진한다.",
+          "references": [
+            { "title": "위키백과: 포트폴리오 평가", "url": "https://ko.wikipedia.org/wiki/%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4" },
+            { "title": "에듀넷: 과정중심평가", "url": "https://www.edunet.net" }
+          ]
+        },
+        {
+          "name": "평가의 타당도",
+          "years": [2026],
+          "description": "평가 도구가 측정하고자 하는 것을 얼마나 정확하게 측정하는가의 정도이다. 내용 타당도(교육과정 내용 반영), 구인 타당도(구성개념 측정), 준거 타당도(외적 준거와의 상관) 등으로 구분된다.",
+          "references": [
+            { "title": "위키백과: 타당도", "url": "https://ko.wikipedia.org/wiki/%ED%83%80%EB%8B%B9%EB%8F%84" },
+            { "title": "에듀넷: 교육평가의 기초", "url": "https://www.edunet.net" }
+          ]
+        },
+        {
+          "name": "루브릭 (채점기준표)",
+          "years": [2026],
+          "description": "수행평가의 채점 기준을 수준별로 구체적으로 기술한 평가 도구이다. 교사에게는 일관된 채점 기준을, 학생에게는 명확한 학습 목표와 자기 평가 기준을 제공하여 평가의 투명성을 높인다.",
+          "references": [
+            { "title": "위키백과: 루브릭", "url": "https://en.wikipedia.org/wiki/Rubric_(academic)" },
+            { "title": "에듀넷: 수행평가와 루브릭", "url": "https://www.edunet.net" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "guidance",
+      "name": "생활지도·상담",
+      "color": "rose",
+      "years": [2015, 2016, 2019, 2023],
+      "theories": [
+        {
+          "name": "안전교육·위기관리",
+          "years": [2015],
+          "description": "학교 안전사고의 예방, 대비, 대응, 복구의 4단계 위기관리 체계이다. 안전교육을 통한 예방이 핵심이며, 사고 발생 시 교사·학교·교육청의 체계적 대응 절차를 포함한다.",
+          "references": [
+            { "title": "국가법령정보센터: 학교안전사고 예방 및 보상에 관한 법률", "url": "https://www.law.go.kr/법령/학교안전사고예방및보상에관한법률" }
+          ]
+        },
+        {
+          "name": "인본주의 상담 (로저스)",
+          "years": [2019],
+          "description": "Rogers의 인간중심 상담이론으로, 무조건적 긍정적 존중, 공감적 이해, 진솔성(일치성)을 상담 관계의 핵심 조건으로 제시한다. 상담자의 태도가 내담자의 자기 성장을 촉진한다고 본다.",
+          "references": [
+            { "title": "위키백과: 칼 로저스", "url": "https://ko.wikipedia.org/wiki/%EC%B9%BC_%EB%A1%9C%EC%A0%80%EC%8A%A4" },
+            { "title": "위키백과: 인간중심 상담", "url": "https://ko.wikipedia.org/wiki/%EC%9D%B8%EA%B0%84%EC%A4%91%EC%8B%AC_%EC%B9%98%EB%A3%8C" }
+          ]
+        },
+        {
+          "name": "REBT (합리정서행동치료)",
+          "years": [2019],
+          "description": "Ellis의 합리정서행동치료(REBT)로, ABC 모형(사건-신념-결과)을 통해 비합리적 신념을 합리적 신념으로 전환하여 정서적·행동적 문제를 해결한다. 학교 상담에서 학생의 왜곡된 사고 패턴을 수정하는 데 활용된다.",
+          "references": [
+            { "title": "위키백과: 합리적 정서행동치료", "url": "https://ko.wikipedia.org/wiki/%ED%95%A9%EB%A6%AC%EC%A0%81_%EC%A0%95%EC%84%9C%ED%96%89%EB%8F%99%EC%B9%98%EB%A3%8C" }
+          ]
+        },
+        {
+          "name": "긍정심리학·강점기반 상담",
+          "years": [2023],
+          "description": "Seligman의 긍정심리학에 기반하여 학생의 강점과 잠재력에 초점을 맞추는 상담 접근이다. 문제 중심이 아닌 강점 중심으로 학생의 대인관계 능력과 회복탄력성을 향상시킨다.",
+          "references": [
+            { "title": "위키백과: 긍정심리학", "url": "https://ko.wikipedia.org/wiki/%EA%B8%8D%EC%A0%95%EC%8B%AC%EB%A6%AC%ED%95%99" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "management",
+      "name": "학교경영",
+      "color": "amber",
+      "years": [2018, 2020, 2025],
+      "theories": [
+        {
+          "name": "학교조직문화",
+          "years": [2018],
+          "description": "학교 구성원들이 공유하는 가치, 신념, 행동 양식의 총체이다. 협력적 문화, 개인주의 문화, 인위적 협동 문화 등으로 유형화되며, 긍정적 조직문화가 교육의 질 향상에 기여한다.",
+          "references": [
+            { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" }
+          ]
+        },
+        {
+          "name": "학교효과 연구",
+          "years": [2020],
+          "description": "효과적인 학교의 특성을 규명하는 연구 분야로, 교장의 교수적 리더십, 높은 학업 기대, 안전한 학교 풍토, 교사 협력, 학생 성취도 모니터링 등을 효과적 학교의 핵심 요인으로 제시한다.",
+          "references": [
+            { "title": "위키백과: 효과적인 학교", "url": "https://en.wikipedia.org/wiki/Effective_schools" }
+          ]
+        },
+        {
+          "name": "교사리더십",
+          "years": [2020],
+          "description": "공식적 직위 없이도 교사가 동료 교사, 학생, 학부모, 학교 공동체에 발휘하는 영향력이다. 수업 전문성, 동료 협력, 학교 의사결정 참여, 전문적 학습공동체 운영 등의 역량을 포함한다.",
+          "references": [
+            { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" }
+          ]
+        },
+        {
+          "name": "학급경영 (민주적·질서중심)",
+          "years": [2025],
+          "description": "민주적 학급경영은 학생 참여와 자율성을 중시하고, 질서중심 학급경영은 규칙과 절차를 강조한다. 학교 맥락(학생 특성, 학교 환경)에 따라 두 접근을 균형 있게 적용하는 것이 효과적이다.",
+          "references": [
+            { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "professionalism",
+      "name": "교직전문성",
+      "color": "sky",
+      "years": [2016, 2018, 2020, 2021],
+      "theories": [
+        {
+          "name": "반성적 실천 (Schön)",
+          "years": [2016],
+          "description": "Schön의 반성적 실천가 모형으로, 교사가 수업 중(reflection-in-action)과 수업 후(reflection-on-action) 자신의 교수 행위를 비판적으로 성찰하여 전문성을 지속적으로 개선한다.",
+          "references": [
+            { "title": "위키백과: 도널드 쇤", "url": "https://en.wikipedia.org/wiki/Donald_Sch%C3%B6n" }
+          ]
+        },
+        {
+          "name": "인성교육진흥법",
+          "years": [2018],
+          "description": "2015년 시행된 법률로, 학교 교육에서 인성교육을 체계적으로 실시하도록 의무화하였다. 예, 효, 정직, 책임, 존중, 배려, 소통, 협동 등 핵심 가치·덕목을 교육과정에 통합하여 운영한다.",
+          "references": [
+            { "title": "국가법령정보센터: 인성교육진흥법", "url": "https://www.law.go.kr/법령/인성교육진흥법" }
+          ]
+        },
+        {
+          "name": "동료장학",
+          "years": [2018],
+          "description": "동료 교사 간 수업 관찰, 피드백, 공동 연구를 통해 교수 능력을 향상시키는 교내 장학 활동이다. 수업 공개, 수업 협의회, 멘토링, 코칭 등의 형태로 이루어지며, 전문적 학습공동체의 핵심 활동이다.",
+          "references": [
+            { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" }
+          ]
+        }
+      ]
+    }
+  ],
+  "yearlyAnalysis": [
+    {
+      "year": 2015,
+      "topic": "학생 안전사고의 예방 및 대처 방안",
+      "domain": "생활지도·상담",
+      "domainId": "guidance",
+      "format": "대화형",
+      "scoring": { "content": 10, "structure": 10 },
+      "subQuestions": 3,
+      "keyTheories": ["안전교육", "위기관리 대응 체계"],
+      "keywords": ["안전교육", "예방 수칙", "사고 대처", "관리·감독 의무"],
+      "detail": "초등학교 교사 간 대화를 통해 학생 안전사고의 심각성을 제시하고, 안전교육의 필요성, 예방 수칙, 사고 발생 시 교사·학교의 대응 방안을 논술하게 하는 문항이다."
+    },
+    {
+      "year": 2016,
+      "topic": "학생 행동 관리와 학습이론의 적용",
+      "domain": "교수학습",
+      "domainId": "teaching",
+      "format": "대화형",
+      "scoring": { "content": 10, "structure": 10 },
+      "subQuestions": 4,
+      "keyTheories": ["행동주의 (조작적 조건화)", "사회학습이론 (반두라)", "반성적 실천"],
+      "keywords": ["행동 관리", "강화", "모델링", "반성적 실천"],
+      "detail": "교실에서의 학생 행동 관리를 위한 학습이론 적용을 다루며, 조작적 조건화와 사회학습이론을 각각 적용한 사례를 분석하고, 교사의 반성적 실천의 중요성을 논술하게 한다."
+    },
+    {
+      "year": 2017,
+      "topic": "2015 개정 교육과정에 따른 교수·학습 및 평가 개선",
+      "domain": "교수학습",
+      "domainId": "teaching",
+      "format": "대화형",
+      "scoring": { "content": 15, "structure": 5 },
+      "subQuestions": 3,
+      "keyTheories": ["2015 개정 교육과정", "협동학습 (STAD)", "정의적 영역 평가"],
+      "keywords": ["핵심역량", "핵심개념", "STAD", "정의적 평가", "과정 중심 평가"],
+      "detail": "2015 개정 교육과정의 교수·학습 핵심 요점, 협동학습(STAD)의 보상 체계와 기여, 정의적 능력 평가의 중요성과 방법을 논술하게 한다. 2017학년도부터 내용 15점·체계 5점으로 배점이 변경되었다."
+    },
+    {
+      "year": 2018,
+      "topic": "인성교육을 위한 학교 교육과정 편성·운영과 교사의 역할",
+      "domain": "학교경영",
+      "domainId": "management",
+      "format": "대화형",
+      "scoring": { "content": 15, "structure": 5 },
+      "subQuestions": 3,
+      "keyTheories": ["인성교육진흥법", "학교조직문화", "동료장학", "교육과정 유형"],
+      "keywords": ["인성교육", "교과 통합", "조직문화", "동료장학", "잠재적 교육과정"],
+      "detail": "인성교육의 교과 통합·연계 운영 방안, 조직문화 개선과 교사 역량(동료장학), 교육과정 유형(공식·잠재)과 편성·운영 고려사항을 논술하게 한다."
+    },
+    {
+      "year": 2019,
+      "topic": "학생 생활지도와 상담적 접근",
+      "domain": "생활지도·상담",
+      "domainId": "guidance",
+      "format": "대화형",
+      "scoring": { "content": 15, "structure": 5 },
+      "subQuestions": 3,
+      "keyTheories": ["2015 개정 교육과정 핵심역량", "인본주의 상담 (로저스)", "REBT (합리정서행동치료)"],
+      "keywords": ["핵심역량", "공감", "무조건적 긍정적 존중", "비합리적 신념", "ABC 모형"],
+      "detail": "2015 개정 교육과정 핵심역량 지도, 로저스의 상담 관계 형성 3요소(공감·무조건적 긍정적 존중·진솔성), REBT의 비합리적 신념 전환 방법을 논술하게 한다."
+    },
+    {
+      "year": 2020,
+      "topic": "학교 조직 진단을 통한 학교효과성 및 교사리더십 향상",
+      "domain": "학교경영",
+      "domainId": "management",
+      "format": "보고서형",
+      "scoring": { "content": 15, "structure": 5 },
+      "subQuestions": 3,
+      "keyTheories": ["학교효과 연구", "교사리더십"],
+      "keywords": ["학교효과", "조직 진단", "교사리더십", "민주적 의사결정", "업무 경감"],
+      "detail": "학교 조직 진단 결과를 바탕으로 학교효과성 향상 요인, 교사리더십 역량과 근거, 학교 차원 지원 방안을 논술하게 하는 보고서형 문항이다."
+    },
+    {
+      "year": 2021,
+      "topic": "학교 교육과정 편성·운영과 학습 부진 해소",
+      "domain": "교육과정",
+      "domainId": "curriculum",
+      "format": "대화형",
+      "scoring": { "content": 15, "structure": 5 },
+      "subQuestions": 3,
+      "keyTheories": ["교육과정 3단계 개발 모형", "2015 개정 교육과정"],
+      "keywords": ["학교 수준 교육과정", "교사 자율성", "학습 부진", "내용 재구성"],
+      "detail": "학교 수준 교육과정 운영의 근거와 교사 역할, 교육과정 개발 시 인적·물적 자원 고려사항, 학습 부진 원인과 해소 방안을 논술하게 한다. 2021학년도부터 답안지 2매 형식으로 변경되었다."
+    },
+    {
+      "year": 2022,
+      "topic": "교육과정 자율성과 유연한 운영 전략",
+      "domain": "교육과정",
+      "domainId": "curriculum",
+      "format": "대화형",
+      "scoring": { "content": 15, "structure": 5 },
+      "subQuestions": 3,
+      "keyTheories": ["교육과정 3단계 개발 모형"],
+      "keywords": ["교육과정 자율성", "부진 학생 지원", "프로젝트 학습", "학생 참여", "시수 유연화"],
+      "detail": "국가·지역·학교 3단계 교육과정 개발의 필요성, 세 교사의 교육과정 운영 관점과 교사 역할, 교육과정 편성·운영 방안과 기대 효과를 논술하게 한다."
+    },
+    {
+      "year": 2023,
+      "topic": "대인관계 능력 향상을 위한 생활지도·상담 협력 체계",
+      "domain": "생활지도·상담",
+      "domainId": "guidance",
+      "format": "대화형",
+      "scoring": { "content": 15, "structure": 5 },
+      "subQuestions": 3,
+      "keyTheories": ["긍정심리학·강점기반 상담"],
+      "keywords": ["대인관계", "협력체계", "강점 발견", "상담 목표 설정", "학부모·지역사회 연계"],
+      "detail": "학교장·학부모·지역 상담사의 지원 방안, 학생 강점 발견과 대인관계 긍정적 영향, 상담 목표 설정 고려사항과 기대 효과를 논술하게 한다."
+    },
+    {
+      "year": 2024,
+      "topic": "통합 단원 설계·운영과 평가 피드백 개선",
+      "domain": "교육과정",
+      "domainId": "curriculum",
+      "format": "대화형",
+      "scoring": { "content": 15, "structure": 5 },
+      "subQuestions": 4,
+      "keyTheories": ["개념 기반 교육과정 설계", "포트폴리오 평가"],
+      "keywords": ["통합 단원", "핵심 개념", "교과 통합", "포트폴리오", "피드백", "과정 중심 평가"],
+      "detail": "개념 기반 통합 단원 설계의 장점, 운영 과제와 개선 방법, 피드백 문제점과 개선 방안, 학생 평가 결과 활용 방안을 논술하게 한다."
+    },
+    {
+      "year": 2025,
+      "topic": "학교 맥락 분석 기반 학급경영 성찰 및 개선",
+      "domain": "학교경영",
+      "domainId": "management",
+      "format": "대화형",
+      "scoring": { "content": 15, "structure": 5 },
+      "subQuestions": 4,
+      "keyTheories": ["학급경영 (민주적·질서중심)"],
+      "keywords": ["학교 맥락 분석", "학급경영 관점", "민주시민", "학생-교사 소통", "어려움의 기회 전환"],
+      "detail": "학교 맥락 분석 자료를 참조한 학급경영의 근거, 학급경영 관점 차이, 학생 특성 기반 목표 설정, 교육적 대응 전략, 어려움을 기회로 전환하는 방안을 논술하게 한다."
+    },
+    {
+      "year": 2026,
+      "topic": "단원 설계, 평가 타당도 및 루브릭 개발·활용",
+      "domain": "교육평가",
+      "domainId": "assessment",
+      "format": "대화형",
+      "scoring": { "content": 15, "structure": 5 },
+      "subQuestions": 4,
+      "keyTheories": ["평가의 타당도", "루브릭 (채점기준표)"],
+      "keywords": ["단원 설계", "학습 내용 선정·조직", "타당도", "선택형·서술형", "루브릭", "자기 평가"],
+      "detail": "단원 설계의 목적과 학습 내용 선정·조직 고려사항, 수행평가 타당도 문제와 해결, 선택형·서술형 문항의 장단점, 루브릭의 교사·학생 측면 역할을 논술하게 한다."
+    }
+  ],
+  "statistics": {
+    "domainDistribution": [
+      { "domain": "교육과정", "domainId": "curriculum", "count": 4, "years": [2021, 2022, 2024, 2017] },
+      { "domain": "교수학습", "domainId": "teaching", "count": 2, "years": [2016, 2017] },
+      { "domain": "교육평가", "domainId": "assessment", "count": 1, "years": [2026] },
+      { "domain": "생활지도·상담", "domainId": "guidance", "count": 3, "years": [2015, 2019, 2023] },
+      { "domain": "학교경영", "domainId": "management", "count": 3, "years": [2018, 2020, 2025] },
+      { "domain": "교직전문성", "domainId": "professionalism", "count": 0, "years": [] }
+    ],
+    "formatDistribution": {
+      "dialogue": { "count": 11, "percentage": 91.7, "years": [2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025, 2026] },
+      "report": { "count": 1, "percentage": 8.3, "years": [2020] }
+    },
+    "scoringChanges": [
+      { "period": "2015~2016", "format": "원고지 1,200자", "content": 10, "structure": 10, "note": "내용과 체계 동일 배점" },
+      { "period": "2017~2020", "format": "원고지 1,200자", "content": 15, "structure": 5, "note": "내용 비중 상향 조정" },
+      { "period": "2021~2026", "format": "답안지 2매", "content": 15, "structure": 5, "note": "답안지 형식으로 변경" }
+    ],
+    "recentEmphasis": ["교육과정 편성·운영", "학급경영·맥락 분석", "평가 타당도·루브릭"],
+    "frequentCombinations": [
+      { "theories": ["교육과정 편성·운영", "교수학습 개선"], "years": [2017, 2021, 2022] },
+      { "theories": ["상담이론", "핵심역량 지도"], "years": [2019, 2023] },
+      { "theories": ["학교조직문화", "교사리더십·동료장학"], "years": [2018, 2020] },
+      { "theories": ["통합 단원 설계", "과정 중심 평가"], "years": [2024, 2026] }
+    ]
+  }
+}
