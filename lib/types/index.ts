@@ -20,6 +20,8 @@ export interface GeneratedQuestion {
   referenceMaterials: string[];
   expectedStructure: QuestionStructure;
   difficulty: "basic" | "standard" | "advanced";
+  targetTheories?: string[];
+  targetDomain?: string;
 }
 
 export interface ScoreItem {

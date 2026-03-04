@@ -4,6 +4,7 @@ import type { ExamPaper, ExamPatterns, QuestionStructure } from "@/lib/types";
 
 const PARSED_DIR = join(process.cwd(), "data", "parsed");
 const PATTERNS_FILE = join(process.cwd(), "data", "patterns.json");
+const ANALYSIS_FILE = join(process.cwd(), "data", "analysis.json");
 
 function parseQuestionStructure(md: string): QuestionStructure {
   const subQMatch = md.match(/(\d+)\)/g);
@@ -77,5 +78,10 @@ export function getAllExams(): ExamPaper[] {
 
 export function getExamPatterns(): ExamPatterns {
   const raw = readFileSync(PATTERNS_FILE, "utf-8");
+  return JSON.parse(raw);
+}
+
+export function getAnalysis() {
+  const raw = readFileSync(ANALYSIS_FILE, "utf-8");
   return JSON.parse(raw);
 }
