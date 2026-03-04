@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import type { GeneratedQuestion, GradeResult } from "@/lib/types";
+import ExamPaperView from "@/components/ExamPaperView";
 
 export default function PracticePage() {
   const [step, setStep] = useState<"setup" | "writing" | "grading" | "result">("setup");
@@ -138,12 +139,20 @@ export default function PracticePage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 font-semibold text-stone-800">문제</h2>
-          <div className="whitespace-pre-wrap text-sm leading-relaxed text-stone-700">
-            {question.promptText}
-          </div>
+        <div className="flex justify-end" data-print-hide>
+          <button
+            onClick={() => window.print()}
+            className="rounded-lg border border-stone-200 px-4 py-2 text-sm text-stone-600 transition hover:bg-stone-50"
+          >
+            PDF로 저장
+          </button>
         </div>
+
+        <ExamPaperView
+          examFormat={question.examFormat}
+          fallbackText={question.promptText}
+          difficulty={question.difficulty}
+        />
 
         <textarea
           value={essay}

@@ -143,7 +143,7 @@ ${sampleExamText}
 
 다음 JSON 형식으로 응답하세요:
 {
-  "promptText": "문제 전문 (제시문 대화 + 하위 문항 포함)",
+  "promptText": "문제 전문 (제시문 대화 + 하위 문항 포함, 폴백용)",
   "referenceMaterials": ["제시문에 포함된 참고 자료들"],
   "expectedStructure": {
     "hasIntroScenario": true,
@@ -153,7 +153,21 @@ ${sampleExamText}
   },
   "difficulty": "${difficulty}",
   "targetTheories": ["출제에 활용된 이론명"],
-  "targetDomain": "${domain.name}"
+  "targetDomain": "${domain.name}",
+  "examFormat": {
+    "title": "20XX학년도 초등학교 교직논술",
+    "topic": "논술 주제 한 줄 요약",
+    "scenario": "제시문 전체 (대화형 텍스트, 교사 이름과 대화 포함)",
+    "subQuestions": {
+      "instruction": "위 대화에 근거하여 논하시오. [총 20점]",
+      "items": ["1) 첫 번째 하위 문항 [X점]", "2) 두 번째 하위 문항 [X점]"]
+    },
+    "scoring": {
+      "content": { "total": 15, "items": [{"label": "평가 항목", "score": 5}] },
+      "structure": { "total": 5, "items": [{"label": "평가 항목", "score": 5}] }
+    },
+    "notes": ["답안의 분량은 답안지 2매 이내로 작성", "문제와 관계없는 내용은 배점에서 제외"]
+  }
 }`;
 }
 

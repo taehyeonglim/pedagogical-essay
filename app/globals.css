@@ -7,3 +7,18 @@ body {
     "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol", sans-serif;
 }
+
+@media print {
+  header, footer, nav, textarea,
+  [data-print-hide] { display: none !important; }
+
+  [data-exam-paper] {
+    box-shadow: none !important;
+    max-width: none !important;
+    padding: 2cm !important;
+    border: none !important;
+  }
+
+  body { background: white !important; }
+  @page { size: A4; margin: 0; }
+}

@@ -1,3 +1,18 @@
+export interface ExamPaperFormat {
+  title: string;
+  topic: string;
+  scenario: string;
+  subQuestions: {
+    instruction: string;
+    items: string[];
+  };
+  scoring: {
+    content: { total: number; items: { label: string; score: number }[] };
+    structure: { total: number; items: { label: string; score: number }[] };
+  };
+  notes: string[];
+}
+
 export interface ExamPaper {
   year: number;
   rawMd: string;
@@ -22,6 +37,7 @@ export interface GeneratedQuestion {
   difficulty: "basic" | "standard" | "advanced";
   targetTheories?: string[];
   targetDomain?: string;
+  examFormat?: ExamPaperFormat;
 }
 
 export interface ScoreItem {
