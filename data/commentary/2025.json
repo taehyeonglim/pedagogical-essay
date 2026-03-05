@@ -4,12 +4,30 @@
   "problemExplanation": "2025학년도 초등학교 교직논술 문제는 학교 맥락 분석에 기반한 학급경영을 종합적으로 다루는 문항이다. 제시된 학교실태 분석 자료(학생·교사·학부모·지역사회 특성)를 바탕으로 네 가지를 논술하도록 요구한다. 첫째, 학교실태 분석의 필요성과 질서중심(송 교사)-민주적(박 교사) 학급경영 관점의 차이 비교는 학급경영의 이론적 기반과 다양한 접근법에 대한 이해를 평가한다. 둘째, 학생 특성을 고려한 학급경영 목표 설정과 기여 요인은 실태 분석 결과를 실제 경영 계획에 적용하는 능력을 평가한다. 셋째, 학생 반응에 대한 교육적 대처는 학급경영 상황에서의 교사의 실천적 지혜를 확인한다. 넷째, 어려움 요인의 긍정적 전환은 위기를 기회로 바꾸는 창의적 문제 해결 역량을 평가한다. 이 문제는 학급경영의 이론(관점 비교), 계획(목표 설정), 실행(교육적 대처), 성찰(어려움 전환)의 전 과정을 아우르는 종합적 문항이다.",
   "pedagogicalBackground": "이 문제의 핵심 이론적 배경은 학급경영 이론, 특히 민주적 학급경영과 질서중심 학급경영의 비교이다. 질서중심(교사 중심) 학급경영은 Canter의 적극적 교실 경영(Assertive Discipline)에 기반하며, 교사가 명확한 규칙과 일관된 결과를 설정하여 학습에 적합한 환경을 조성하는 것을 강조한다. 민주적(학생 중심) 학급경영은 Dreikurs의 민주적 교실경영 이론에 기반하며, 학생의 소속감과 자율성을 존중하고, 학급회의를 통한 공동 의사결정, 논리적 결과(logical consequences)의 적용을 강조한다. Glasser의 선택이론(Choice Theory)도 민주적 접근의 이론적 기반으로, 학생이 자신의 행동을 선택할 수 있는 환경을 조성해야 한다고 주장한다. 또한 학교 맥락 분석(school context analysis)은 체제 이론(systems theory)에 기반하여, 학교를 학생·교사·학부모·지역사회가 상호작용하는 개방 체제로 보고 각 구성 요소의 특성과 요구를 종합적으로 분석하여 교육 계획에 반영하는 접근이다. 우리나라의 학급경영 연구에서는 두 접근의 양극단이 아닌, 학교 맥락과 학생 특성에 따라 질서와 민주성을 균형 있게 조화시키는 통합적 접근을 강조하고 있다.",
   "references": [
-    { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" },
-    { "title": "Wikipedia: Classroom management", "url": "https://en.wikipedia.org/wiki/Classroom_management" },
-    { "title": "Wikipedia: Assertive discipline", "url": "https://en.wikipedia.org/wiki/Assertive_discipline" },
-    { "title": "Wikipedia: Rudolf Dreikurs", "url": "https://en.wikipedia.org/wiki/Rudolf_Dreikurs" },
-    { "title": "Wikipedia: Choice theory", "url": "https://en.wikipedia.org/wiki/Choice_theory" },
-    { "title": "에듀넷: 학급경영의 이론과 실제", "url": "https://www.edunet.net" }
+    {
+      "title": "Wikipedia: Classroom management",
+      "url": "https://en.wikipedia.org/wiki/Classroom_management"
+    },
+    {
+      "title": "Wikipedia: Classroom management",
+      "url": "https://en.wikipedia.org/wiki/Classroom_management"
+    },
+    {
+      "title": "Wikipedia: Assertive discipline",
+      "url": "https://en.wikipedia.org/wiki/Assertive_discipline"
+    },
+    {
+      "title": "Wikipedia: Rudolf Dreikurs",
+      "url": "https://en.wikipedia.org/wiki/Rudolf_Dreikurs"
+    },
+    {
+      "title": "Wikipedia: Choice theory",
+      "url": "https://en.wikipedia.org/wiki/Choice_theory"
+    },
+    {
+      "title": "위키백과: 학급경영",
+      "url": "https://en.wikipedia.org/wiki/Classroom_management"
+    }
   ],
   "sentenceAnnotations": [
     {

@@ -4,11 +4,26 @@
   "problemExplanation": "이 문제는 2015 개정 교육과정의 교수·학습 개선 방향을 종합적으로 이해하고 있는지를 평가한다. 출제 의도는 세 가지로 구분된다. 첫째, 2015 개정 교육과정에서 강조하는 교수·학습의 중점 사항 3가지를 제시문 대화에서 근거를 찾아 서술하되, 협동학습은 제외해야 한다. 제시문에서 핵심 개념 중심 구조화, 단편적 암기 지양과 학생 수준 고려, 교과 통합이라는 세 가지 단서가 명확히 제시되어 있으므로, 이를 정확히 포착하여 논술해야 한다. 둘째, STAD 모형의 보상 방식(집단 보상)을 정확히 서술하고, 그것이 협동학습 촉진에 기여하는 메커니즘(긍정적 상호의존성, 개인 책무성)을 설명해야 한다. 김 교사가 직소I에서 개별 보상만 하다가 STAD 방식으로 전환했다는 대화 내용이 핵심 단서이다. 셋째, 정의적 능력 평가의 중요성 2가지와 방법 2가지를 논해야 하며, 제시문의 박 교사와 김 교사 대화에서 인지적·정의적 능력의 관계, 초등학교 교육 목표, 정의적 평가 소홀 등의 단서를 활용해야 한다.",
   "pedagogicalBackground": "이 문제의 핵심 배경은 2015 개정 교육과정, 협동학습 이론, 정의적 영역 평가이다. 2015 개정 교육과정은 핵심역량(자기관리, 지식정보처리, 창의적 사고, 심미적 감성, 의사소통, 공동체 역량) 함양을 목표로 교과 교육과정을 핵심 개념 중심으로 재구조화하고, 교과 간 통합과 학생 참여 중심 수업을 강조한다. 협동학습은 소집단 구성원 간 긍정적 상호의존성(positive interdependence)과 개인 책무성(individual accountability)을 기반으로 학습 효과를 높이는 교수 전략이다. STAD(Student Teams-Achievement Divisions, 모둠성취분담)는 Slavin이 개발한 모형으로, 교사의 수업 후 모둠 내 학습, 개별 퀴즈, 향상 점수 산출, 모둠 보상의 절차로 진행된다. 개인의 향상 점수를 합산하여 모둠에 보상하므로 모둠원 간 상호 도움이 촉진된다. Jigsaw(직소) 모형은 Aronson이 개발한 것으로, 전문가 집단에서 학습한 내용을 원래 집단으로 돌아가 가르치는 구조이다. 직소I은 개인 성적만 반영하여 협동의 동기가 약한 반면, 직소II나 STAD 방식의 집단 보상을 도입하면 협동이 강화된다. 정의적 영역 평가는 Bloom의 교육목표 분류학 중 정의적 영역(감수, 반응, 가치화, 조직화, 인격화)에 해당하며, 자기보고식 검사(리커트 척도, 의미분별법), 관찰법(일화기록법, 체크리스트), 면담법, 자기평가, 동료평가 등의 방법이 활용된다.",
   "references": [
-    { "title": "교육부: 2015 개정 교육과정 총론", "url": "https://ncic.re.kr/mobile.kri.org4.inventoryList.do" },
-    { "title": "Wikipedia: Cooperative learning", "url": "https://en.wikipedia.org/wiki/Cooperative_learning" },
-    { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" },
-    { "title": "위키백과: 대한민국의 교육과정", "url": "https://ko.wikipedia.org/wiki/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%EC%9D%98_%EA%B5%90%EC%9C%A1%EA%B3%BC%EC%A0%95" },
-    { "title": "에듀넷: 정의적 특성 평가", "url": "https://www.edunet.net" }
+    {
+      "title": "교육부: 2015 개정 교육과정 총론",
+      "url": "https://ncic.re.kr/mobile.kri.org4.inventoryList.do"
+    },
+    {
+      "title": "Wikipedia: Cooperative learning",
+      "url": "https://en.wikipedia.org/wiki/Cooperative_learning"
+    },
+    {
+      "title": "Wikipedia: Student Team Achievement Division",
+      "url": "https://en.wikipedia.org/wiki/Student_Teams_%E2%80%93_Achievement_Divisions"
+    },
+    {
+      "title": "위키백과: 대한민국의 교육과정",
+      "url": "https://ko.wikipedia.org/wiki/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%EC%9D%98_%EA%B5%90%EC%9C%A1%EA%B3%BC%EC%A0%95"
+    },
+    {
+      "title": "Wikipedia: Affective domain",
+      "url": "https://en.wikipedia.org/wiki/Bloom%27s_taxonomy#Affective_domain"
+    }
   ],
   "sentenceAnnotations": [
     {

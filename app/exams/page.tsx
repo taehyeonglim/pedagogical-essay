@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 interface ExamSummary {
   year: number;
@@ -24,13 +24,13 @@ type TabKey =
   | "references"
   | "annotations";
 
-const TABS: { key: TabKey; label: string; icon: string }[] = [
-  { key: "pdf", label: "원본 시험지", icon: "📄" },
-  { key: "modelAnswer", label: "모범 답안", icon: "📝" },
-  { key: "explanation", label: "문제 해설", icon: "💡" },
-  { key: "pedagogy", label: "교육학적 설명", icon: "📚" },
-  { key: "references", label: "참고문헌", icon: "🔗" },
-  { key: "annotations", label: "첨삭 해설", icon: "✏️" },
+const TABS: { key: TabKey; label: string; shortLabel: string; icon: string }[] = [
+  { key: "pdf", label: "원본 시험지", shortLabel: "시험지", icon: "📄" },
+  { key: "modelAnswer", label: "모범 답안", shortLabel: "모범답안", icon: "📝" },
+  { key: "explanation", label: "문제 해설", shortLabel: "해설", icon: "💡" },
+  { key: "pedagogy", label: "교육학적 설명", shortLabel: "이론", icon: "📚" },
+  { key: "references", label: "참고문헌", shortLabel: "참고", icon: "🔗" },
+  { key: "annotations", label: "첨삭 해설", shortLabel: "첨삭", icon: "✏️" },
 ];
 
 export default function ExamsPage() {
@@ -40,6 +40,8 @@ export default function ExamsPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("pdf");
   const [loading, setLoading] = useState(true);
   const [commentaryLoading, setCommentaryLoading] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const cacheRef = useRef<Record<number, Commentary>>({});
 
   useEffect(() => {
     fetch("/api/exams")
@@ -50,22 +52,40 @@ export default function ExamsPage() {
       });
   }, []);
 
-  useEffect(() => {
-    if (!selectedYear) return;
+  const fetchCommentary = useCallback(async (year: number) => {
+    if (cacheRef.current[year]) {
+      setCommentary(cacheRef.current[year]);
+      return;
+    }
     setCommentaryLoading(true);
-    fetch(`/api/exams?commentary=${selectedYear}`)
-      .then((r) => r.json())
-      .then((data) => {
-        setCommentary(data);
-        setCommentaryLoading(false);
-      })
-      .catch(() => setCommentaryLoading(false));
-  }, [selectedYear]);
+    try {
+      const r = await fetch(`/api/exams?commentary=${year}`);
+      if (!r.ok) throw new Error("fetch failed");
+      const data: Commentary = await r.json();
+      if (!data.modelAnswer) throw new Error("invalid data");
+      cacheRef.current[year] = data;
+      setCommentary(data);
+    } catch {
+      setCommentary(null);
+    } finally {
+      setCommentaryLoading(false);
+    }
+  }, []);
 
   function selectYear(year: number) {
     setSelectedYear(year);
     setActiveTab("pdf");
-    setCommentary(null);
+    setCommentary(cacheRef.current[year] ?? null);
+    setTimeout(() => {
+      contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  }
+
+  function handleTabClick(key: TabKey) {
+    setActiveTab(key);
+    if (key !== "pdf" && selectedYear && !commentary && !commentaryLoading) {
+      fetchCommentary(selectedYear);
+    }
   }
 
   if (loading) {
@@ -113,7 +133,7 @@ export default function ExamsPage() {
 
       {/* 선택된 연도의 컨텐츠 */}
       {selectedYear && (
-        <div className="flex flex-col gap-4">
+        <div ref={contentRef} className="flex flex-col gap-4 scroll-mt-4">
           {/* 헤더 */}
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-stone-800">
@@ -130,12 +150,18 @@ export default function ExamsPage() {
           </div>
 
           {/* 탭 네비게이션 */}
-          <div className="flex flex-wrap gap-1 rounded-xl border border-stone-200 bg-stone-100 p-1">
+          <div
+            role="tablist"
+            className="flex flex-wrap gap-1 rounded-xl border border-stone-200 bg-stone-100 p-1"
+          >
             {TABS.map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                role="tab"
+                aria-selected={activeTab === tab.key}
+                aria-label={tab.label}
+                onClick={() => handleTabClick(tab.key)}
+                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition sm:px-3 ${
                   activeTab === tab.key
                     ? "bg-white text-emerald-700 shadow-sm"
                     : "text-stone-500 hover:bg-white/50 hover:text-stone-700"
@@ -143,12 +169,13 @@ export default function ExamsPage() {
               >
                 <span className="text-base">{tab.icon}</span>
                 <span className="hidden sm:inline">{tab.label}</span>
+                <span className="text-xs sm:hidden">{tab.shortLabel}</span>
               </button>
             ))}
           </div>
 
           {/* 탭 콘텐츠 */}
-          <div className="min-h-[60vh] rounded-xl border border-stone-200 bg-white shadow-sm">
+          <div role="tabpanel" className="rounded-xl border border-stone-200 bg-white shadow-sm">
             {activeTab === "pdf" && (
               <iframe
                 key={selectedYear}
@@ -160,7 +187,10 @@ export default function ExamsPage() {
 
             {activeTab !== "pdf" && commentaryLoading && (
               <div className="flex h-64 items-center justify-center text-stone-400">
-                해설을 불러오는 중...
+                <div className="flex flex-col items-center gap-3">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-stone-200 border-t-emerald-600" />
+                  <span>해설을 불러오는 중...</span>
+                </div>
               </div>
             )}
 
@@ -196,6 +226,41 @@ export default function ExamsPage() {
   );
 }
 
+/* ---------- 헬퍼 ---------- */
+
+/** 텍스트를 문단으로 분리하고, "첫째", "둘째" 등 논점 마커를 강조 */
+function FormattedText({
+  text,
+  className = "",
+}: {
+  text: string;
+  className?: string;
+}) {
+  const paragraphs = text.split("\n\n").filter(Boolean);
+  const markerRe = /^(첫째|둘째|셋째|넷째|다섯째|여섯째|마지막으로)(,|\.|\s)/;
+
+  return (
+    <div className={`flex flex-col gap-4 ${className}`}>
+      {paragraphs.map((p, i) => {
+        const match = p.match(markerRe);
+        if (match) {
+          return (
+            <p key={i} className="text-[15px] leading-[1.9] text-stone-800">
+              <strong className="text-emerald-700">{match[1]}</strong>
+              {p.slice(match[1].length)}
+            </p>
+          );
+        }
+        return (
+          <p key={i} className="text-[15px] leading-[1.9] text-stone-800">
+            {p}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
 /* ---------- 탭 컴포넌트들 ---------- */
 
 function ModelAnswerTab({ commentary }: { commentary: Commentary }) {
@@ -213,9 +278,7 @@ function ModelAnswerTab({ commentary }: { commentary: Commentary }) {
         </div>
       </div>
       <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-6">
-        <div className="whitespace-pre-wrap text-[15px] leading-[1.9] text-stone-800">
-          {commentary.modelAnswer}
-        </div>
+        <FormattedText text={commentary.modelAnswer} />
       </div>
     </div>
   );
@@ -233,9 +296,10 @@ function ExplanationTab({ commentary }: { commentary: Commentary }) {
           <p className="text-xs text-stone-400">출제 의도와 핵심 요구사항 분석</p>
         </div>
       </div>
-      <div className="whitespace-pre-wrap text-[15px] leading-relaxed text-stone-700">
-        {commentary.problemExplanation}
-      </div>
+      <FormattedText
+        text={commentary.problemExplanation}
+        className="text-stone-700"
+      />
     </div>
   );
 }
@@ -249,12 +313,15 @@ function PedagogyTab({ commentary }: { commentary: Commentary }) {
         </div>
         <div>
           <h3 className="text-lg font-bold text-stone-800">교육학적 설명</h3>
-          <p className="text-xs text-stone-400">관련 교육학 이론과 개념의 학술적 배경</p>
+          <p className="text-xs text-stone-400">
+            관련 교육학 이론과 개념의 학술적 배경
+          </p>
         </div>
       </div>
-      <div className="whitespace-pre-wrap text-[15px] leading-relaxed text-stone-700">
-        {commentary.pedagogicalBackground}
-      </div>
+      <FormattedText
+        text={commentary.pedagogicalBackground}
+        className="text-stone-700"
+      />
     </div>
   );
 }
@@ -318,7 +385,7 @@ function AnnotationsTab({ commentary }: { commentary: Commentary }) {
         {commentary.sentenceAnnotations.map((item, i) => (
           <div
             key={i}
-            className="rounded-lg border border-stone-200 overflow-hidden"
+            className="overflow-hidden rounded-lg border border-stone-200"
           >
             <div className="border-b border-stone-200 bg-stone-50 px-5 py-3">
               <div className="flex items-start gap-3">

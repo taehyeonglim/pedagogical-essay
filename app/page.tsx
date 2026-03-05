@@ -22,7 +22,7 @@ export default function Home() {
             기출 열람 및 해설
           </h2>
           <p className="mt-2 text-sm text-stone-500">
-            12년간(2015~2026) 기출문제를 확인하고 출제 패턴을 분석합니다.
+            12년간 기출문제와 모범 답안, 문장별 첨삭 해설을 확인합니다.
           </p>
         </Link>
 

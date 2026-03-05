@@ -4,11 +4,26 @@
   "problemExplanation": "이 문제는 초등학교 교사가 학생을 종합적으로 지도하고 상담하는 역량을 평가하는 문항이다. 크게 세 가지를 묻고 있다. 첫째, 2015 개정 교육과정 총론에 제시된 핵심역량 중 진영이에게 필요한 2가지를 정확히 식별하고 각각에 대한 구체적 지도 방안을 제시할 수 있는지를 평가한다. 둘째, Rogers의 인본주의 상담 이론에 기반한 상담 초기 관계 형성의 3대 조건(공감, 무조건적 긍정적 존중, 진솔성)을 대화에서 찾아내고, 이를 구체적인 언어적 표현으로 적용할 수 있는지를 묻는다. 셋째, Ellis의 REBT(합리적 정서행동치료)에서 말하는 비합리적 신념의 개념을 이해하고, 대화에서 비합리적 신념을 식별한 뒤 논박을 통해 합리적 신념으로 전환하는 방안을 제시할 수 있는지를 평가한다. 출제 의도는 교육과정 이해, 상담 이론의 실제 적용력, 인지적 접근을 통한 학생 지도 능력을 종합적으로 확인하는 데 있다.",
   "pedagogicalBackground": "이 문제의 교육학적 배경은 크게 세 영역으로 구분된다.\n\n1. 2015 개정 교육과정 핵심역량: 2015 개정 교육과정 총론은 미래 사회를 살아가기 위해 필요한 6대 핵심역량으로 자기관리 역량, 지식정보처리 역량, 창의적 사고 역량, 심미적 감성 역량, 의사소통 역량, 공동체 역량을 제시하고 있다. 이 중 의사소통 역량은 다양한 상황에서 자신의 생각과 감정을 효과적으로 표현하고 다른 사람의 의견을 경청하며 존중하는 역량이고, 자기관리 역량은 자아 정체성과 자신감을 가지고 자신의 삶과 진로에 필요한 기초 능력과 자질을 갖추어 자기주도적으로 살아갈 수 있는 역량이다.\n\n2. Rogers의 인간중심 상담(인본주의 상담): Carl Rogers는 상담자가 내담자에게 제공해야 할 핵심적 관계 조건으로 공감적 이해(empathic understanding), 무조건적 긍정적 존중(unconditional positive regard), 진솔성(genuineness/congruence)을 제시하였다. 공감적 이해란 내담자의 내적 세계를 마치 자신의 것처럼 느끼되 '마치'라는 조건을 잃지 않는 것이고, 무조건적 긍정적 존중이란 내담자를 어떤 조건이나 평가 없이 있는 그대로 수용하고 존중하는 것이며, 진솔성이란 상담자가 가식 없이 자신의 생각과 감정을 솔직하게 전달하는 것이다. 이 세 가지 조건이 충족될 때 내담자는 자기 탐색과 변화의 동기를 갖게 된다.\n\n3. Ellis의 REBT(합리적 정서행동치료): Albert Ellis가 창시한 REBT는 정서적 문제의 원인을 사건 자체가 아닌 사건에 대한 비합리적 신념(irrational belief)에서 찾는다. ABC 모형에서 A(Activating event: 선행사건)가 직접 C(Consequence: 결과/정서)를 유발하는 것이 아니라 B(Belief: 신념)가 매개한다고 본다. 비합리적 신념의 특징은 '반드시 ~해야 한다(musturbation)', '파국화(awfulizing)', '낮은 좌절 인내력(low frustration tolerance)' 등이며, 이를 D(Disputing: 논박)를 통해 합리적 신념으로 전환하여 E(Effect: 효과)로서 건강한 정서와 행동을 이끌어 낸다.",
   "references": [
-    { "title": "교육부: 2015 개정 교육과정 총론", "url": "https://ncic.re.kr/mobile.kri.org4.inventoryList.do" },
-    { "title": "위키백과: 대한민국의 교육과정", "url": "https://ko.wikipedia.org/wiki/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%EC%9D%98_%EA%B5%90%EC%9C%A1%EA%B3%BC%EC%A0%95" },
-    { "title": "Wikipedia: Person-centered therapy (Carl Rogers)", "url": "https://en.wikipedia.org/wiki/Person-centered_therapy" },
-    { "title": "Wikipedia: Rational emotive behavior therapy (Albert Ellis)", "url": "https://en.wikipedia.org/wiki/Rational_emotive_behavior_therapy" },
-    { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" }
+    {
+      "title": "교육부: 2015 개정 교육과정 총론",
+      "url": "https://ncic.re.kr/mobile.kri.org4.inventoryList.do"
+    },
+    {
+      "title": "위키백과: 대한민국의 교육과정",
+      "url": "https://ko.wikipedia.org/wiki/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%EC%9D%98_%EA%B5%90%EC%9C%A1%EA%B3%BC%EC%A0%95"
+    },
+    {
+      "title": "Wikipedia: Person-centered therapy (Carl Rogers)",
+      "url": "https://en.wikipedia.org/wiki/Person-centered_therapy"
+    },
+    {
+      "title": "Wikipedia: Rational emotive behavior therapy (Albert Ellis)",
+      "url": "https://en.wikipedia.org/wiki/Rational_emotive_behavior_therapy"
+    },
+    {
+      "title": "Wikipedia: School counseling",
+      "url": "https://en.wikipedia.org/wiki/School_counseling"
+    }
   ],
   "sentenceAnnotations": [
     {

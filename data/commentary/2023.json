@@ -4,12 +4,30 @@
   "problemExplanation": "2023학년도 초등학교 교직논술 문제는 코로나19 이후 학생들의 대인관계 능력 저하라는 시의적절한 주제를 다루고 있다. 문제는 크게 세 가지를 묻고 있다. 첫째, 생활지도와 상담에서 교사 혼자가 아닌 학교장·학부모·지역사회 전문 상담사와의 협력 체계를 통해 어떤 지원을 받을 수 있는지를 구체적으로 제시하도록 요구한다. 이는 생활지도의 협력적 접근을 강조하는 출제 의도가 반영되어 있다. 둘째, 제시된 학생(영우, 진서)의 강점을 파악하고, 강점을 인식시키는 것이 대인관계 능력에 미치는 긍정적 영향을 논술하도록 요구한다. 이는 긍정심리학과 강점 기반 상담의 핵심 원리를 이해하고 적용할 수 있는지를 평가하려는 의도이다. 셋째, 상담 목표 설정의 원리와 기대 효과를 물어 상담의 체계적 운영 역량을 확인하고자 한다. 전체적으로 이 문제는 생활지도·상담 영역에서 교사의 실천적 역량(협력 체계 활용, 강점 발견, 목표 설정)을 종합적으로 평가하는 문항이다.",
   "pedagogicalBackground": "이 문제의 핵심 이론적 배경은 Seligman의 긍정심리학(Positive Psychology)과 강점 기반 상담(Strengths-Based Counseling)이다. 전통적 상담이 문제와 결함에 초점을 맞추는 것과 달리, 긍정심리학은 개인의 강점, 덕성, 긍정적 경험에 주목한다. Seligman은 PERMA 모델(긍정 정서, 몰입, 관계, 의미, 성취)을 통해 인간의 행복과 웰빙을 설명하며, 특히 '관계(Relationships)' 요소가 대인관계 능력과 직결된다. 강점 기반 상담에서는 내담자가 자신의 강점을 인식하고 이를 활용하여 문제를 해결하도록 돕는데, 이는 자기효능감(Bandura)의 향상과 내적 동기(Deci & Ryan의 자기결정성 이론)를 촉진한다. 또한 상담 목표 설정과 관련하여, 효과적인 상담 목표는 구체적(Specific), 측정 가능(Measurable), 달성 가능(Achievable), 현실적(Realistic), 시간 제한(Time-bound)의 SMART 원칙을 따라야 한다. 학교 상담에서의 협력 체계는 ASCA(미국학교상담자협회) 모델에서 강조하는 학교-가정-지역사회 연계 체제와 맥을 같이하며, 우리나라의 「학교폭력예방 및 대책에 관한 법률」과 Wee 프로젝트 체계와도 연결된다. 이러한 다층적 지원 체계(Multi-Tiered System of Supports)는 모든 학생을 위한 보편적 예방, 위기 학생을 위한 선별적 개입, 고위기 학생을 위한 집중적 개입의 3단계로 구성된다.",
   "references": [
-    { "title": "위키백과: 긍정심리학", "url": "https://ko.wikipedia.org/wiki/%EA%B8%8D%EC%A0%95%EC%8B%AC%EB%A6%AC%ED%95%99" },
-    { "title": "Wikipedia: Positive psychology", "url": "https://en.wikipedia.org/wiki/Positive_psychology" },
-    { "title": "Wikipedia: Strengths-based practice", "url": "https://en.wikipedia.org/wiki/Strengths-based_practice" },
-    { "title": "Wikipedia: SMART criteria", "url": "https://en.wikipedia.org/wiki/SMART_criteria" },
-    { "title": "에듀넷: 학교상담과 생활지도", "url": "https://www.edunet.net" },
-    { "title": "국가법령정보센터: 학교폭력예방법", "url": "https://www.law.go.kr" }
+    {
+      "title": "위키백과: 긍정심리학",
+      "url": "https://ko.wikipedia.org/wiki/%EA%B8%8D%EC%A0%95%EC%8B%AC%EB%A6%AC%ED%95%99"
+    },
+    {
+      "title": "Wikipedia: Positive psychology",
+      "url": "https://en.wikipedia.org/wiki/Positive_psychology"
+    },
+    {
+      "title": "Wikipedia: Strengths-based practice",
+      "url": "https://en.wikipedia.org/wiki/Strengths-based_practice"
+    },
+    {
+      "title": "Wikipedia: SMART criteria",
+      "url": "https://en.wikipedia.org/wiki/SMART_criteria"
+    },
+    {
+      "title": "Wikipedia: School counseling",
+      "url": "https://en.wikipedia.org/wiki/School_counseling"
+    },
+    {
+      "title": "국가법령정보센터: 학교폭력예방법",
+      "url": "https://www.law.go.kr"
+    }
   ],
   "sentenceAnnotations": [
     {

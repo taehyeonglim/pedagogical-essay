@@ -20,24 +20,26 @@ export default function RootLayout({
             <Link href="/" className="text-lg font-bold text-white">
               교직논술 연습
             </Link>
-            <div className="flex gap-8 text-sm font-medium">
+            <div className="flex gap-2 text-xs font-medium sm:gap-6 sm:text-sm">
               <Link
                 href="/exams"
-                className="rounded-lg px-3 py-2 text-emerald-100 transition hover:bg-emerald-600 hover:text-white"
+                className="rounded-lg px-2 py-2 text-emerald-100 transition hover:bg-emerald-600 hover:text-white sm:px-3"
               >
-                기출 열람 및 해설
+                <span className="sm:hidden">기출 해설</span>
+                <span className="hidden sm:inline">기출 열람 및 해설</span>
               </Link>
               <Link
                 href="/practice"
-                className="rounded-lg px-3 py-2 text-emerald-100 transition hover:bg-emerald-600 hover:text-white"
+                className="rounded-lg px-2 py-2 text-emerald-100 transition hover:bg-emerald-600 hover:text-white sm:px-3"
               >
                 모의 연습
               </Link>
               <Link
                 href="/analysis"
-                className="rounded-lg px-3 py-2 text-emerald-100 transition hover:bg-emerald-600 hover:text-white"
+                className="rounded-lg px-2 py-2 text-emerald-100 transition hover:bg-emerald-600 hover:text-white sm:px-3"
               >
-                출제 패턴 분석
+                <span className="sm:hidden">패턴 분석</span>
+                <span className="hidden sm:inline">출제 패턴 분석</span>
               </Link>
             </div>
           </nav>
