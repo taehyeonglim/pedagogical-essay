@@ -77,6 +77,21 @@ export function getAllExams(): ExamPaper[] {
   return exams.sort((a, b) => a.year - b.year);
 }
 
+export function getAllExamSummaries(): { year: number; topic: string }[] {
+  const files = readdirSync(PARSED_DIR).filter((f) => f.endsWith(".md"));
+  const summaries: { year: number; topic: string }[] = [];
+  for (const file of files) {
+    const year = parseInt(file.replace(".md", ""));
+    if (!isNaN(year)) {
+      try {
+        const md = readFileSync(join(PARSED_DIR, file), "utf-8");
+        summaries.push({ year, topic: extractTopic(md) });
+      } catch { /* skip */ }
+    }
+  }
+  return summaries.sort((a, b) => a.year - b.year);
+}
+
 export function getExamPatterns(): ExamPatterns {
   const raw = readFileSync(PATTERNS_FILE, "utf-8");
   return JSON.parse(raw);

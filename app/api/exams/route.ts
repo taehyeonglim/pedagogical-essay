@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAllExams, getExam, getCommentary } from "@/lib/knowledge-base";
+import { getAllExamSummaries, getExam, getCommentary } from "@/lib/knowledge-base";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -18,6 +18,6 @@ export async function GET(request: Request) {
     return NextResponse.json(exam);
   }
 
-  const exams = getAllExams();
-  return NextResponse.json(exams);
+  const summaries = getAllExamSummaries();
+  return NextResponse.json(summaries);
 }
