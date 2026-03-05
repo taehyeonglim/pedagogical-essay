@@ -42,6 +42,7 @@ export default function ExamsPage() {
   const [commentaryLoading, setCommentaryLoading] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const cacheRef = useRef<Record<number, Commentary>>({});
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     fetch("/api/exams")
@@ -65,25 +66,33 @@ export default function ExamsPage() {
       setCommentary(cacheRef.current[year]);
       return;
     }
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     setCommentaryLoading(true);
     try {
-      const r = await fetch(`/api/exams?commentary=${year}`);
+      const r = await fetch(`/api/exams?commentary=${year}`, { signal: controller.signal });
       if (!r.ok) throw new Error("fetch failed");
       const data: Commentary = await r.json();
       if (!data.modelAnswer) throw new Error("invalid data");
       cacheRef.current[year] = data;
       setCommentary(data);
-    } catch {
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") return;
       setCommentary(null);
     } finally {
-      setCommentaryLoading(false);
+      if (!controller.signal.aborted) {
+        setCommentaryLoading(false);
+      }
     }
   }, []);
 
   function selectYear(year: number) {
+    if (abortRef.current) abortRef.current.abort();
     setSelectedYear(year);
     setActiveTab("pdf");
     setCommentary(cacheRef.current[year] ?? null);
+    setCommentaryLoading(false);
     setTimeout(() => {
       contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 50);
@@ -91,7 +100,7 @@ export default function ExamsPage() {
 
   function handleTabClick(key: TabKey) {
     setActiveTab(key);
-    if (key !== "pdf" && selectedYear && !commentary && !commentaryLoading) {
+    if (key !== "pdf" && selectedYear && (!commentary || commentary.year !== selectedYear) && !commentaryLoading) {
       fetchCommentary(selectedYear);
     }
   }
