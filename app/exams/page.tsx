@@ -45,9 +45,17 @@ export default function ExamsPage() {
 
   useEffect(() => {
     fetch("/api/exams")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error("fetch failed");
+        return r.json();
+      })
       .then((data) => {
         setExams(data.map((e: ExamSummary) => ({ year: e.year, topic: e.topic })));
+      })
+      .catch(() => {
+        setExams([]);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
@@ -101,6 +109,12 @@ export default function ExamsPage() {
       <h1 className="text-2xl font-bold text-stone-800">
         기출문제 열람 및 해설
       </h1>
+
+      {exams.length === 0 && (
+        <div className="py-8 text-center text-stone-400">
+          기출문제 데이터를 불러올 수 없습니다. 페이지를 새로고침해 주세요.
+        </div>
+      )}
 
       {/* 연도 선택 그리드 */}
       <div className="grid gap-3 sm:grid-cols-3 md:grid-cols-4">
@@ -236,7 +250,10 @@ function FormattedText({
   text: string;
   className?: string;
 }) {
-  const paragraphs = text.split("\n\n").filter(Boolean);
+  let paragraphs = text.split("\n\n").filter(Boolean);
+  if (paragraphs.length <= 1) {
+    paragraphs = text.split("\n").filter(Boolean);
+  }
   const markerRe = /^(첫째|둘째|셋째|넷째|다섯째|여섯째|마지막으로)(,|\.|\s)/;
 
   return (
