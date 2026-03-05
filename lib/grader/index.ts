@@ -80,17 +80,41 @@ ${essay}
 }`;
 }
 
+function isValidGradeResult(r: unknown): r is GradeResult {
+  if (!r || typeof r !== "object") return false;
+  const obj = r as Record<string, unknown>;
+  if (typeof obj.overallScore !== "number") return false;
+  if (!obj.breakdown || typeof obj.breakdown !== "object") return false;
+  const bd = obj.breakdown as Record<string, unknown>;
+  for (const key of ["content", "logic", "expression"]) {
+    if (!bd[key] || typeof bd[key] !== "object") return false;
+    const item = bd[key] as Record<string, unknown>;
+    if (typeof item.score !== "number" || typeof item.maxScore !== "number") return false;
+  }
+  if (!Array.isArray(obj.strengths) || !Array.isArray(obj.improvements)) return false;
+  return true;
+}
+
 export async function gradeEssay(
   essay: string,
   question: GeneratedQuestion
 ): Promise<GradeResult> {
   const prompt = buildGradePrompt(essay, question);
-  const result = await generateJSON<GradeResult>(prompt);
+  const raw = await generateJSON<GradeResult>(prompt);
 
+  if (!isValidGradeResult(raw)) {
+    throw new Error("AI 채점 응답 구조가 올바르지 않습니다");
+  }
+
+  const result = raw;
   result.breakdown.content.score = Math.max(0, Math.min(result.breakdown.content.score, result.breakdown.content.maxScore));
   result.breakdown.logic.score = Math.max(0, Math.min(result.breakdown.logic.score, result.breakdown.logic.maxScore));
   result.breakdown.expression.score = Math.max(0, Math.min(result.breakdown.expression.score, result.breakdown.expression.maxScore));
   result.overallScore = result.breakdown.content.score + result.breakdown.logic.score + result.breakdown.expression.score;
+
+  if (!Array.isArray(result.spellingIssues)) result.spellingIssues = [];
+  if (!Array.isArray(result.strengths) || result.strengths.length === 0) result.strengths = ["채점 결과를 참고하세요."];
+  if (!Array.isArray(result.improvements) || result.improvements.length === 0) result.improvements = ["채점 결과를 참고하세요."];
 
   return result;
 }

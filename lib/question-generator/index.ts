@@ -163,7 +163,7 @@ export async function generateQuestion(
   const result = await generateJSON<Omit<GeneratedQuestion, "id">>(prompt);
 
   return {
-    id: `q_${Date.now()}`,
+    id: crypto.randomUUID(),
     ...result,
   };
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import type { GeneratedQuestion, GradeResult } from "@/lib/types";
 import ExamPaperView from "@/components/ExamPaperView";
 
@@ -35,7 +36,11 @@ function loadDraft(): DraftData | null {
 function saveDraft(essay: string, question: GeneratedQuestion, endTime: number) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ essay, question, endTime }));
-  } catch { /* ignore */ }
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[practice] localStorage 용량 초과 — 자동저장 실패");
+    }
+  }
 }
 
 function clearDraft() {
@@ -60,7 +65,11 @@ function saveHistory(entry: HistoryEntry) {
     list.unshift(entry);
     if (list.length > MAX_HISTORY) list.length = MAX_HISTORY;
     localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
-  } catch { /* ignore */ }
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.warn("[practice] localStorage 용량 초과 — 이력 저장 실패");
+    }
+  }
 }
 
 function loadHistory(): HistoryEntry[] {
@@ -71,6 +80,19 @@ function loadHistory(): HistoryEntry[] {
     return [];
   }
 }
+
+function getScoreColor(score: number): string {
+  if (score >= 16) return "text-emerald-600";
+  if (score >= 12) return "text-amber-600";
+  return "text-red-600";
+}
+
+const GRADING_MESSAGES = [
+  "논술 구조를 분석하고 있습니다...",
+  "교육학 이론 적용도를 평가하고 있습니다...",
+  "채점 기준에 따라 점수를 산정하고 있습니다...",
+  "피드백을 생성하고 있습니다...",
+];
 
 export default function PracticePage() {
   const [step, setStep] = useState<"setup" | "writing" | "grading" | "result">("setup");
@@ -85,6 +107,9 @@ export default function PracticePage() {
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [viewingEntry, setViewingEntry] = useState<HistoryEntry | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [confirmingGiveUp, setConfirmingGiveUp] = useState(false);
+  const [gradingMsgIndex, setGradingMsgIndex] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const endTimeRef = useRef<number>(0);
   const autoSubmittedRef = useRef(false);
@@ -93,6 +118,23 @@ export default function PracticePage() {
     const draft = loadDraft();
     if (draft) setHasDraft(true);
   }, []);
+
+  // 에러 메시지 자동 해제
+  useEffect(() => {
+    if (!errorMessage) return;
+    const t = setTimeout(() => setErrorMessage(null), 5000);
+    return () => clearTimeout(t);
+  }, [errorMessage]);
+
+  // 채점 중 메시지 순환
+  useEffect(() => {
+    if (step !== "grading") return;
+    setGradingMsgIndex(0);
+    const id = setInterval(() => {
+      setGradingMsgIndex((prev) => (prev + 1) % GRADING_MESSAGES.length);
+    }, 4000);
+    return () => clearInterval(id);
+  }, [step]);
 
   const startTimer = useCallback((endTime?: number) => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -120,7 +162,7 @@ export default function PracticePage() {
     return () => window.removeEventListener("beforeunload", handler);
   }, [step, essay]);
 
-  // 자동 저장 (ref 기반 — 연속 타이핑 중에도 10초마다 실행)
+  // 자동 저장 (ref 기반)
   const essayRef = useRef(essay);
   const questionRef = useRef(question);
   essayRef.current = essay;
@@ -166,6 +208,7 @@ export default function PracticePage() {
 
   const handleGenerate = async () => {
     setLoading(true);
+    setErrorMessage(null);
     try {
       const res = await fetch("/api/questions/generate", {
         method: "POST",
@@ -181,7 +224,7 @@ export default function PracticePage() {
       autoSubmittedRef.current = false;
       startTimer();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "문제 생성에 실패했습니다.");
+      setErrorMessage(e instanceof Error ? e.message : "문제 생성에 실패했습니다.");
     } finally {
       setLoading(false);
     }
@@ -192,6 +235,7 @@ export default function PracticePage() {
       if (timerRef.current) clearInterval(timerRef.current);
       setStep("grading");
       setLoading(true);
+      setErrorMessage(null);
       try {
         const res = await fetch("/api/grade", {
           method: "POST",
@@ -216,7 +260,7 @@ export default function PracticePage() {
         });
         setStep("result");
       } catch (e) {
-        alert(e instanceof Error ? e.message : "채점에 실패했습니다.");
+        setErrorMessage(e instanceof Error ? e.message : "채점에 실패했습니다.");
         setStep("writing");
         if (!isAutoSubmit) {
           startTimer(endTimeRef.current);
@@ -231,23 +275,24 @@ export default function PracticePage() {
   const handleSubmit = () => {
     if (!question || loading) return;
     if (essay.length < 100) {
-      alert("최소 100자 이상 작성해주세요.");
+      setErrorMessage("최소 100자 이상 작성해주세요.");
       return;
     }
     submitForGrading(essay, question);
   };
 
-  // 타이머 만료 시 자동 제출
+  // 타이머 만료 시 자동 제출 (ref 기반으로 stale closure 방지)
   useEffect(() => {
     if (timeLeft > 0 || step !== "writing" || autoSubmittedRef.current) return;
     autoSubmittedRef.current = true;
-    if (question && essay.length >= 100) {
-      submitForGrading(essay, question, true);
+    const currentEssay = essayRef.current;
+    const currentQuestion = questionRef.current;
+    if (currentQuestion && currentEssay.length >= 100) {
+      submitForGrading(currentEssay, currentQuestion, true);
     } else {
-      alert("시간이 종료되었습니다. 제출 및 채점 버튼을 눌러 수동 제출해 주세요.");
+      setErrorMessage("시간이 종료되었습니다. 제출 및 채점 버튼을 눌러 수동 제출해 주세요.");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeLeft]);
+  }, [timeLeft, step, submitForGrading]);
 
   if (step === "setup") {
     return (
@@ -255,19 +300,25 @@ export default function PracticePage() {
         <h1 className="text-2xl font-bold text-stone-800">모의 논술 연습</h1>
         <p className="text-stone-500">난이도를 선택하고 모의 문제를 생성하세요.</p>
 
+        {errorMessage && (
+          <div className="w-full max-w-md rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm text-red-700" role="alert">
+            {errorMessage}
+          </div>
+        )}
+
         {hasDraft && (
           <div className="w-full max-w-md rounded-xl border border-amber-300 bg-amber-50 p-5">
             <p className="text-sm font-medium text-amber-800">이전에 작성 중이던 답안이 있습니다.</p>
             <div className="mt-3 flex gap-2">
               <button
                 onClick={handleRecover}
-                className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-700"
+                className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
               >
                 이어서 작성
               </button>
               <button
                 onClick={handleDismissDraft}
-                className="rounded-lg border border-amber-300 px-4 py-2 text-sm text-amber-700 transition hover:bg-amber-100"
+                className="rounded-lg border border-amber-300 px-4 py-2 text-sm text-amber-700 transition hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
               >
                 삭제
               </button>
@@ -282,7 +333,7 @@ export default function PracticePage() {
               onClick={() => setDifficulty(d)}
               role="radio"
               aria-checked={difficulty === d}
-              className={`rounded-lg border-2 px-6 py-4 text-sm font-medium transition ${
+              className={`rounded-lg border-2 px-6 py-4 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 ${
                 difficulty === d
                   ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm"
                   : "border-stone-200 bg-white text-stone-600 hover:border-emerald-300 hover:bg-emerald-50/50"
@@ -296,14 +347,14 @@ export default function PracticePage() {
         <button
           onClick={handleGenerate}
           disabled={loading}
-          className="rounded-lg bg-emerald-600 px-8 py-4 font-medium text-white shadow-sm transition hover:bg-emerald-700 disabled:opacity-50"
+          className="rounded-lg bg-emerald-600 px-8 py-4 font-medium text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 disabled:opacity-50"
         >
           {loading ? "문제 생성 중..." : "문제 생성하기"}
         </button>
 
         <button
           onClick={() => { setHistory(loadHistory()); setShowHistory(!showHistory); }}
-          className="text-sm text-stone-400 underline underline-offset-2 transition hover:text-stone-600"
+          className="text-sm text-stone-400 underline underline-offset-2 transition hover:text-stone-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-400"
         >
           {showHistory ? "연습 이력 닫기" : "연습 이력 보기"}
         </button>
@@ -318,9 +369,9 @@ export default function PracticePage() {
                   <button
                     key={entry.id + entry.date}
                     onClick={() => setViewingEntry(viewingEntry?.date === entry.date ? null : entry)}
-                    className="flex items-center gap-4 rounded-lg border border-stone-200 bg-white px-5 py-3 text-left transition hover:border-emerald-300 hover:bg-emerald-50/50"
+                    className="flex items-center gap-4 rounded-lg border border-stone-200 bg-white px-5 py-3 text-left transition hover:border-emerald-300 hover:bg-emerald-50/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
                   >
-                    <span className="text-2xl font-bold text-emerald-600">{entry.score}</span>
+                    <span className={`text-2xl font-bold ${getScoreColor(entry.score)}`}>{entry.score}</span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-stone-700">{entry.domain || "미분류"}</p>
                       <p className="text-xs text-stone-400">
@@ -343,6 +394,7 @@ export default function PracticePage() {
   }
 
   if (step === "writing" && question) {
+    const charLabel = essay.length < 1000 ? "부족" : essay.length > 1800 ? "초과" : "적정";
     const charColor = essay.length < 1000 ? "text-stone-400" : essay.length > 1800 ? "text-amber-600" : "text-emerald-600";
     return (
       <div className="flex flex-col gap-6">
@@ -350,7 +402,7 @@ export default function PracticePage() {
           <h1 className="text-xl font-bold text-stone-800">모의 논술 작성</h1>
           <div className="flex items-center gap-2 sm:gap-4">
             <span className={`text-sm ${charColor}`}>
-              {essay.length}자
+              {essay.length}자 ({charLabel})
               <span className="ml-1 hidden text-xs text-stone-400 sm:inline">(권장 1,000~1,800자)</span>
             </span>
             <span
@@ -367,10 +419,16 @@ export default function PracticePage() {
           </div>
         </div>
 
+        {errorMessage && (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm text-red-700" role="alert">
+            {errorMessage}
+          </div>
+        )}
+
         <div className="flex justify-end" data-print-hide>
           <button
             onClick={() => window.print()}
-            className="rounded-lg border border-stone-200 px-4 py-2 text-sm text-stone-600 transition hover:bg-stone-50"
+            className="rounded-lg border border-stone-200 px-4 py-2 text-sm text-stone-600 transition hover:bg-stone-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-400"
           >
             PDF로 저장
           </button>
@@ -390,23 +448,41 @@ export default function PracticePage() {
         />
 
         <div className="flex justify-end gap-3">
-          <button
-            onClick={() => {
-              if (!confirm("정말 포기하시겠습니까? 작성 중인 답안이 삭제됩니다.")) return;
-              if (timerRef.current) clearInterval(timerRef.current);
-              clearDraft();
-              setStep("setup");
-              setEssay("");
-              setQuestion(null);
-            }}
-            className="rounded-lg border border-stone-200 px-6 py-4 text-sm text-stone-600 transition hover:bg-stone-50"
-          >
-            포기하기
-          </button>
+          {confirmingGiveUp ? (
+            <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-2">
+              <span className="text-sm text-red-700">정말 포기하시겠습니까?</span>
+              <button
+                onClick={() => {
+                  if (timerRef.current) clearInterval(timerRef.current);
+                  clearDraft();
+                  setStep("setup");
+                  setEssay("");
+                  setQuestion(null);
+                  setConfirmingGiveUp(false);
+                }}
+                className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
+              >
+                확인
+              </button>
+              <button
+                onClick={() => setConfirmingGiveUp(false)}
+                className="rounded-lg border border-stone-300 px-3 py-1.5 text-sm text-stone-600 transition hover:bg-stone-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-400"
+              >
+                취소
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmingGiveUp(true)}
+              className="rounded-lg border border-stone-200 px-6 py-4 text-sm text-stone-600 transition hover:bg-stone-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-400"
+            >
+              포기하기
+            </button>
+          )}
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="rounded-lg bg-amber-600 px-8 py-4 text-sm font-medium text-white shadow-sm transition hover:bg-amber-700 disabled:opacity-50"
+            className="rounded-lg bg-amber-600 px-8 py-4 text-sm font-medium text-white shadow-sm transition hover:bg-amber-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 disabled:opacity-50"
           >
             제출 및 채점
           </button>
@@ -420,18 +496,20 @@ export default function PracticePage() {
       <div className="flex flex-col items-center gap-4 py-32" role="status" aria-label="채점 중">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-600" />
         <p className="text-stone-500">AI가 논술을 채점하고 있습니다...</p>
+        <p className="text-sm text-stone-400">{GRADING_MESSAGES[gradingMsgIndex]}</p>
       </div>
     );
   }
 
   if (step === "result" && result) {
+    const scoreColor = getScoreColor(result.overallScore);
     return (
       <div className="flex flex-col gap-8">
         <h1 className="text-2xl font-bold text-stone-800">채점 결과</h1>
 
         <div className="rounded-xl border border-stone-200 bg-white p-8 shadow-sm">
           <div className="text-center">
-            <div className="text-5xl font-bold text-emerald-600">{result.overallScore}</div>
+            <div className={`text-5xl font-bold ${scoreColor}`}>{result.overallScore}</div>
             <div className="mt-1 text-stone-500">/ 20점</div>
           </div>
 
@@ -518,19 +596,27 @@ export default function PracticePage() {
           </details>
         )}
 
-        <button
-          onClick={() => {
-            setStep("setup");
-            setEssay("");
-            setQuestion(null);
-            setResult(null);
-            setSubmittedEssay("");
-            setTimeLeft(DURATION_SECONDS);
-          }}
-          className="self-center rounded-lg bg-emerald-600 px-8 py-4 font-medium text-white shadow-sm transition hover:bg-emerald-700"
-        >
-          다시 연습하기
-        </button>
+        <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <button
+            onClick={() => {
+              setStep("setup");
+              setEssay("");
+              setQuestion(null);
+              setResult(null);
+              setSubmittedEssay("");
+              setTimeLeft(DURATION_SECONDS);
+            }}
+            className="rounded-lg bg-emerald-600 px-8 py-4 font-medium text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+          >
+            다시 연습하기
+          </button>
+          <Link
+            href="/analysis"
+            className="rounded-lg border border-stone-300 px-8 py-4 font-medium text-stone-700 transition hover:bg-stone-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-400"
+          >
+            출제 패턴 분석 보기
+          </Link>
+        </div>
       </div>
     );
   }
@@ -553,7 +639,13 @@ function HistoryDetail({ entry, onClose }: { entry: HistoryEntry; onClose: () =>
             {entry.domain} · {entry.difficulty === "basic" ? "기본" : entry.difficulty === "standard" ? "표준" : "심화"} · {entry.score}/20점
           </p>
         </div>
-        <button onClick={onClose} className="text-sm text-stone-400 hover:text-stone-600">닫기</button>
+        <button
+          onClick={onClose}
+          aria-label="이력 상세 닫기"
+          className="text-sm text-stone-400 hover:text-stone-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-400"
+        >
+          닫기
+        </button>
       </div>
       <div className="flex flex-col gap-6 p-6">
         <div className="grid gap-4 sm:grid-cols-3">

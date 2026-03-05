@@ -4,6 +4,7 @@ import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import type { GeneratedQuestion } from "@/lib/types";
 
 const MAX_ESSAY_LENGTH = 10_000;
+const MIN_ESSAY_LENGTH = 100;
 
 export async function POST(request: Request) {
   const { ok } = checkRateLimit(getClientIP(request));
@@ -11,20 +12,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요." }, { status: 429 });
   }
 
+  let body: unknown;
   try {
-    const body = await request.json();
-    const { essay, question } = body as { essay: string; question: GeneratedQuestion };
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "요청 형식이 잘못되었습니다" }, { status: 400 });
+  }
 
-    if (!essay || typeof essay !== "string") {
-      return NextResponse.json({ error: "essay는 문자열이어야 합니다" }, { status: 400 });
-    }
-    if (essay.length > MAX_ESSAY_LENGTH) {
-      return NextResponse.json({ error: `답안은 ${MAX_ESSAY_LENGTH}자를 초과할 수 없습니다` }, { status: 400 });
-    }
-    if (!question || typeof question !== "object" || !question.promptText) {
-      return NextResponse.json({ error: "유효한 question 객체가 필요합니다" }, { status: 400 });
-    }
+  const { essay, question } = body as { essay: string; question: GeneratedQuestion };
 
+  if (!essay || typeof essay !== "string") {
+    return NextResponse.json({ error: "essay는 문자열이어야 합니다" }, { status: 400 });
+  }
+  if (essay.length < MIN_ESSAY_LENGTH) {
+    return NextResponse.json({ error: `답안은 최소 ${MIN_ESSAY_LENGTH}자 이상이어야 합니다` }, { status: 400 });
+  }
+  if (essay.length > MAX_ESSAY_LENGTH) {
+    return NextResponse.json({ error: `답안은 ${MAX_ESSAY_LENGTH}자를 초과할 수 없습니다` }, { status: 400 });
+  }
+  if (!question || typeof question !== "object" || !question.promptText) {
+    return NextResponse.json({ error: "유효한 question 객체가 필요합니다" }, { status: 400 });
+  }
+
+  try {
     const result = await gradeEssay(essay, question);
     return NextResponse.json(result);
   } catch {

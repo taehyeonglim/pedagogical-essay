@@ -15,9 +15,9 @@ export default function Home() {
       <div className="grid w-full max-w-4xl gap-6 sm:grid-cols-3">
         <Link
           href="/exams"
-          className="group rounded-xl border-2 border-stone-200 bg-white p-8 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50 hover:shadow-md"
+          className="group rounded-xl border-2 border-stone-200 bg-white p-8 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
         >
-          <div className="mb-3 text-3xl">📖</div>
+          <div className="mb-3 text-3xl" aria-hidden="true">📖</div>
           <h2 className="text-xl font-semibold text-stone-800 group-hover:text-emerald-700">
             기출 열람 및 해설
           </h2>
@@ -28,9 +28,9 @@ export default function Home() {
 
         <Link
           href="/practice"
-          className="group rounded-xl border-2 border-stone-200 bg-white p-8 shadow-sm transition hover:border-amber-400 hover:bg-amber-50 hover:shadow-md"
+          className="group rounded-xl border-2 border-stone-200 bg-white p-8 shadow-sm transition hover:border-amber-400 hover:bg-amber-50 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
         >
-          <div className="mb-3 text-3xl">✍️</div>
+          <div className="mb-3 text-3xl" aria-hidden="true">✍️</div>
           <h2 className="text-xl font-semibold text-stone-800 group-hover:text-amber-700">
             모의 연습
           </h2>
@@ -41,9 +41,9 @@ export default function Home() {
 
         <Link
           href="/analysis"
-          className="group rounded-xl border-2 border-stone-200 bg-white p-8 shadow-sm transition hover:border-violet-400 hover:bg-violet-50 hover:shadow-md"
+          className="group rounded-xl border-2 border-stone-200 bg-white p-8 shadow-sm transition hover:border-violet-400 hover:bg-violet-50 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
         >
-          <div className="mb-3 text-3xl">📊</div>
+          <div className="mb-3 text-3xl" aria-hidden="true">📊</div>
           <h2 className="text-xl font-semibold text-stone-800 group-hover:text-violet-700">
             출제 패턴 분석
           </h2>
@@ -54,7 +54,7 @@ export default function Home() {
       </div>
 
       <div className="w-full max-w-3xl rounded-xl border-l-4 border-amber-400 bg-amber-50 p-8">
-        <h3 className="text-lg font-semibold text-stone-800">📋 출제 패턴 요약</h3>
+        <h3 className="text-lg font-semibold text-stone-800"><span aria-hidden="true">📋</span> 출제 패턴 요약</h3>
         <ul className="mt-4 space-y-2 text-sm text-stone-600">
           <li>- 총점 20점: 내용 15점 + 체계 5점 (2017학년도~)</li>
           <li>- 주요 주제: 교육과정·평가(33%), 생활지도·상담(25%), 학교경영(25%)</li>

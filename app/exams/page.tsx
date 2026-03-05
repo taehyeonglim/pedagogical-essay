@@ -83,13 +83,27 @@ export default function ExamsPage() {
   function selectYear(year: number) {
     if (abortRef.current) abortRef.current.abort();
     setSelectedYear(year);
-    setActiveTab("pdf");
-    setCommentary(cacheRef.current[year] ?? null);
+    // 탭이 pdf가 아닌 경우 현재 탭 유지, pdf면 유지
+    if (activeTab !== "pdf") {
+      // 해설 데이터가 캐시에 있으면 바로 설정, 없으면 fetch
+      if (cacheRef.current[year]) {
+        setCommentary(cacheRef.current[year]);
+      } else {
+        setCommentary(null);
+        fetchCommentary(year);
+      }
+    } else {
+      setCommentary(cacheRef.current[year] ?? null);
+    }
     setCommentaryLoading(false);
-    setTimeout(() => {
-      contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
   }
+
+  // 연도 선택 시 스크롤
+  useEffect(() => {
+    if (selectedYear) {
+      contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [selectedYear]);
 
   function handleTabClick(key: TabKey) {
     setActiveTab(key);
@@ -124,7 +138,7 @@ export default function ExamsPage() {
           <button
             key={exam.year}
             onClick={() => selectYear(exam.year)}
-            className={`rounded-lg border-2 p-4 text-left transition ${
+            className={`rounded-lg border-2 p-4 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 ${
               selectedYear === exam.year
                 ? "border-emerald-500 bg-emerald-600 text-white shadow-md"
                 : "border-stone-200 bg-white text-stone-800 hover:border-emerald-300 hover:bg-emerald-50"
@@ -137,7 +151,7 @@ export default function ExamsPage() {
             <div
               className={`mt-1 text-xs line-clamp-2 ${
                 selectedYear === exam.year
-                  ? "text-emerald-100"
+                  ? "text-white"
                   : "text-stone-500"
               }`}
             >
@@ -177,10 +191,10 @@ export default function ExamsPage() {
                 aria-selected={activeTab === tab.key}
                 aria-label={tab.label}
                 onClick={() => handleTabClick(tab.key)}
-                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition sm:px-3 ${
+                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 sm:px-3 ${
                   activeTab === tab.key
                     ? "bg-white text-emerald-700 shadow-sm"
-                    : "text-stone-500 hover:bg-white/50 hover:text-stone-700"
+                    : "text-stone-600 hover:bg-white/50 hover:text-stone-700"
                 }`}
               >
                 <span className="text-base">{tab.icon}</span>
@@ -193,12 +207,23 @@ export default function ExamsPage() {
           {/* 탭 콘텐츠 */}
           <div role="tabpanel" className="rounded-xl border border-stone-200 bg-white shadow-sm">
             {activeTab === "pdf" && (
-              <iframe
-                key={selectedYear}
-                src={`/exams/${selectedYear}.pdf`}
-                className="h-[75vh] w-full rounded-xl"
-                title={`${selectedYear}학년도 교직논술`}
-              />
+              <div className="relative">
+                <iframe
+                  key={selectedYear}
+                  src={`/exams/${selectedYear}.pdf`}
+                  className="h-[75vh] w-full rounded-xl"
+                  title={`${selectedYear}학년도 교직논술`}
+                />
+                <div className="absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-white/80 to-transparent p-4">
+                  <a
+                    href={`/exams/${selectedYear}.pdf`}
+                    download
+                    className="rounded-lg bg-stone-700 px-4 py-2 text-xs font-medium text-white transition hover:bg-stone-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-500"
+                  >
+                    PDF가 표시되지 않으면 다운로드
+                  </a>
+                </div>
+              </div>
             )}
 
             {activeTab !== "pdf" && commentaryLoading && (
@@ -264,14 +289,14 @@ function FormattedText({
         const match = p.match(markerRe);
         if (match) {
           return (
-            <p key={i} className="text-[15px] leading-[1.9] text-stone-800">
+            <p key={i} className="text-sm leading-loose text-stone-800">
               <strong className="text-emerald-700">{match[1]}</strong>
               {p.slice(match[1].length)}
             </p>
           );
         }
         return (
-          <p key={i} className="text-[15px] leading-[1.9] text-stone-800">
+          <p key={i} className="text-sm leading-loose text-stone-800">
             {p}
           </p>
         );

@@ -19,8 +19,8 @@ function parseQuestionStructure(md: string): QuestionStructure {
   const hasIntroScenario = /제시문|대화/.test(md);
   const refMatch = md.match(/\(가\)|\(나\)|\(다\)|\(라\)/g);
   const referenceMaterialCount = refMatch ? new Set(refMatch).size : 0;
-  const wordLimitMatch = md.match(/(\d[,.]?\d+)자/);
-  const wordLimit = wordLimitMatch ? parseInt(wordLimitMatch[1].replace(",", "")) : 1200;
+  const wordLimitMatch = md.match(/(\d{1,2}[,.]\d+|\d{3,})자/);
+  const wordLimit = wordLimitMatch ? parseInt(wordLimitMatch[1].replace(",", "").replace(".", "")) : 1200;
 
   return { hasIntroScenario, numberOfSubQuestions, referenceMaterialCount, wordLimit };
 }
@@ -55,6 +55,10 @@ function extractReferenceTexts(md: string): string[] {
 }
 
 export function getExam(year: number): ExamPaper | null {
+  // 캐시가 있으면 캐시에서 조회
+  if (_examsCache) {
+    return _examsCache.find((e) => e.year === year) ?? null;
+  }
   try {
     const filePath = join(PARSED_DIR, `${year}.md`);
     const rawMd = readFileSync(filePath, "utf-8");
@@ -66,7 +70,8 @@ export function getExam(year: number): ExamPaper | null {
       questionStructure: parseQuestionStructure(rawMd),
       referenceTexts: extractReferenceTexts(rawMd),
     };
-  } catch {
+  } catch (e) {
+    console.error(`[knowledge-base] getExam(${year}) 실패:`, e instanceof Error ? e.message : e);
     return null;
   }
 }
@@ -78,31 +83,30 @@ export function getAllExams(): ExamPaper[] {
   for (const file of files) {
     const year = parseInt(file.replace(".md", ""));
     if (!isNaN(year)) {
-      const exam = getExam(year);
-      if (exam) exams.push(exam);
+      try {
+        const filePath = join(PARSED_DIR, `${year}.md`);
+        const rawMd = readFileSync(filePath, "utf-8");
+        exams.push({
+          year,
+          rawMd,
+          topic: extractTopic(rawMd),
+          subTopics: extractSubTopics(rawMd),
+          questionStructure: parseQuestionStructure(rawMd),
+          referenceTexts: extractReferenceTexts(rawMd),
+        });
+      } catch (e) {
+        console.error(`[knowledge-base] 파일 읽기 실패 (${file}):`, e instanceof Error ? e.message : e);
+      }
     }
   }
   _examsCache = exams.sort((a, b) => a.year - b.year);
   return _examsCache;
 }
 
-let _summariesCache: { year: number; topic: string }[] | null = null;
-
 export function getAllExamSummaries(): { year: number; topic: string }[] {
-  if (_summariesCache) return _summariesCache;
-  const files = readdirSync(PARSED_DIR).filter((f) => f.endsWith(".md"));
-  const summaries: { year: number; topic: string }[] = [];
-  for (const file of files) {
-    const year = parseInt(file.replace(".md", ""));
-    if (!isNaN(year)) {
-      try {
-        const md = readFileSync(join(PARSED_DIR, file), "utf-8");
-        summaries.push({ year, topic: extractTopic(md) });
-      } catch { /* skip */ }
-    }
-  }
-  _summariesCache = summaries.sort((a, b) => a.year - b.year);
-  return _summariesCache;
+  // getAllExams 캐시를 활용하여 중복 I/O 방지
+  const exams = getAllExams();
+  return exams.map((e) => ({ year: e.year, topic: e.topic }));
 }
 
 export function getExamPatterns(): ExamPatterns {
@@ -124,7 +128,8 @@ export function getCommentary(year: number): ExamCommentary | null {
     const filePath = join(COMMENTARY_DIR, `${year}.json`);
     const raw = readFileSync(filePath, "utf-8");
     return JSON.parse(raw);
-  } catch {
+  } catch (e) {
+    console.error(`[knowledge-base] getCommentary(${year}) 실패:`, e instanceof Error ? e.message : e);
     return null;
   }
 }

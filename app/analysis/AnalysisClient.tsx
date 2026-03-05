@@ -12,6 +12,7 @@ const DOMAIN_COLORS: Record<string, { bg: string; text: string; bar: string; lig
   sky: { bg: "bg-sky-100", text: "text-sky-700", bar: "bg-sky-500", light: "bg-sky-50", border: "border-sky-300" },
 };
 
+// YEARS를 동적으로 생성하지 않고, 데이터에서 추출하도록 변경은 아래 컴포넌트에서 처리
 const YEARS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
 
 export default function AnalysisClient({ data }: { data: AnalysisData }) {
@@ -55,7 +56,7 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
                     domainRefs.current[d.id]?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }, 50);
                 }}
-                className="group flex items-center gap-4 text-left"
+                className="group flex items-center gap-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 rounded-lg"
               >
                 <span className={`w-28 shrink-0 text-sm font-medium ${colors.text}`}>
                   {d.name}
@@ -94,7 +95,9 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
                 {YEARS.map((year) => (
                   <th
                     key={year}
-                    className="cursor-pointer px-2 py-3 text-center font-medium text-stone-500 transition hover:text-emerald-600"
+                    className="cursor-pointer px-2 py-3 text-center font-medium text-stone-500 transition hover:text-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-500"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpandedYear(expandedYear === year ? null : year); } }}
                     onClick={() => setExpandedYear(expandedYear === year ? null : year)}
                   >
                     <span className="text-xs">{String(year).slice(2)}</span>
@@ -117,15 +120,19 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
                       return (
                         <td key={year} className="px-2 py-3 text-center">
                           {isMainDomain ? (
-                            <span
-                              className={`inline-block h-5 w-5 rounded-full ${colors.bar} cursor-pointer shadow-sm`}
+                            <button
+                              type="button"
+                              className={`inline-block h-5 w-5 rounded-full ${colors.bar} cursor-pointer shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500`}
                               title={`${year}: ${yearData?.topic}`}
+                              aria-label={`${year}학년도 ${yearData?.topic} 상세 보기`}
                               onClick={() => setExpandedYear(expandedYear === year ? null : year)}
                             />
                           ) : hasTheory ? (
-                            <span
-                              className={`inline-block h-3 w-3 rounded-full ${colors.bg} cursor-pointer`}
+                            <button
+                              type="button"
+                              className={`inline-block h-3 w-3 rounded-full ${colors.bg} cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500`}
                               title={`${year}: 관련 이론 출제`}
+                              aria-label={`${year}학년도 관련 이론 상세 보기`}
                               onClick={() => setExpandedYear(expandedYear === year ? null : year)}
                             />
                           ) : null}
@@ -167,7 +174,7 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
                   onClick={() => setExpandedYear(isOpen ? null : item.year)}
                   aria-expanded={isOpen}
                   aria-controls={panelId}
-                  className="flex w-full items-center gap-4 px-5 py-4 text-left"
+                  className="flex w-full items-center gap-4 px-5 py-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 rounded-t-xl"
                 >
                   <span className="text-lg font-bold text-stone-700">{item.year}</span>
                   <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${colors.bg} ${colors.text}`}>
@@ -184,11 +191,11 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
                   <div id={panelId} role="region" className={`border-t px-5 py-5 ${colors.light} ${colors.border}`}>
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-stone-400">주제</p>
+                        <p className="text-xs font-semibold tracking-wide text-stone-500">주제</p>
                         <p className="mt-1 text-sm font-medium text-stone-700">{item.topic}</p>
                       </div>
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-stone-400">출제 형식</p>
+                        <p className="text-xs font-semibold tracking-wide text-stone-500">출제 형식</p>
                         <p className="mt-1 text-sm text-stone-700">
                           {item.format} · 하위 {item.subQuestions}문항 · 내용 {item.scoring.content}점 + 체계 {item.scoring.structure}점
                         </p>
@@ -243,7 +250,7 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
                   onClick={() => setExpandedDomain(isOpen ? null : domain.id)}
                   aria-expanded={isOpen}
                   aria-controls={panelId}
-                  className="flex w-full items-center gap-4 px-5 py-4 text-left"
+                  className="flex w-full items-center gap-4 px-5 py-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 rounded-t-xl"
                 >
                   <span className={`rounded-full px-3 py-1 text-sm font-bold ${colors.bg} ${colors.text}`}>
                     {domain.name}
