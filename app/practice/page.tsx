@@ -6,7 +6,9 @@ import ExamPaperView from "@/components/ExamPaperView";
 
 const DURATION_SECONDS = 60 * 60;
 const STORAGE_KEY = "practice-draft";
+const HISTORY_KEY = "practice-history";
 const AUTOSAVE_INTERVAL = 10_000;
+const MAX_HISTORY = 20;
 
 interface DraftData {
   essay: string;
@@ -40,15 +42,49 @@ function clearDraft() {
   try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
 }
 
+interface HistoryEntry {
+  id: string;
+  date: string;
+  difficulty: string;
+  domain: string;
+  score: number;
+  essay: string;
+  question: GeneratedQuestion;
+  result: GradeResult;
+}
+
+function saveHistory(entry: HistoryEntry) {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    const list: HistoryEntry[] = raw ? JSON.parse(raw) : [];
+    list.unshift(entry);
+    if (list.length > MAX_HISTORY) list.length = MAX_HISTORY;
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
+  } catch { /* ignore */ }
+}
+
+function loadHistory(): HistoryEntry[] {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function PracticePage() {
   const [step, setStep] = useState<"setup" | "writing" | "grading" | "result">("setup");
   const [difficulty, setDifficulty] = useState<"basic" | "standard" | "advanced">("standard");
   const [question, setQuestion] = useState<GeneratedQuestion | null>(null);
   const [essay, setEssay] = useState("");
   const [result, setResult] = useState<GradeResult | null>(null);
+  const [submittedEssay, setSubmittedEssay] = useState("");
   const [timeLeft, setTimeLeft] = useState(DURATION_SECONDS);
   const [loading, setLoading] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [viewingEntry, setViewingEntry] = useState<HistoryEntry | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const endTimeRef = useRef<number>(0);
   const autoSubmittedRef = useRef(false);
@@ -84,14 +120,21 @@ export default function PracticePage() {
     return () => window.removeEventListener("beforeunload", handler);
   }, [step, essay]);
 
-  // 자동 저장
+  // 자동 저장 (ref 기반 — 연속 타이핑 중에도 10초마다 실행)
+  const essayRef = useRef(essay);
+  const questionRef = useRef(question);
+  essayRef.current = essay;
+  questionRef.current = question;
+
   useEffect(() => {
-    if (step !== "writing" || !question) return;
+    if (step !== "writing" || !questionRef.current) return;
     const id = setInterval(() => {
-      saveDraft(essay, question, endTimeRef.current);
+      if (questionRef.current) {
+        saveDraft(essayRef.current, questionRef.current, endTimeRef.current);
+      }
     }, AUTOSAVE_INTERVAL);
     return () => clearInterval(id);
-  }, [step, essay, question]);
+  }, [step]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -147,7 +190,6 @@ export default function PracticePage() {
   const submitForGrading = useCallback(
     async (essayText: string, q: GeneratedQuestion, isAutoSubmit = false) => {
       if (timerRef.current) clearInterval(timerRef.current);
-      clearDraft();
       setStep("grading");
       setLoading(true);
       try {
@@ -159,7 +201,19 @@ export default function PracticePage() {
         if (!res.ok) throw new Error("채점 요청 실패");
         const data = await res.json();
         if (data.error) throw new Error(data.error);
+        clearDraft();
         setResult(data);
+        setSubmittedEssay(essayText);
+        saveHistory({
+          id: q.id,
+          date: new Date().toISOString(),
+          difficulty: q.difficulty,
+          domain: q.targetDomain ?? "",
+          score: data.overallScore,
+          essay: essayText,
+          question: q,
+          result: data,
+        });
         setStep("result");
       } catch (e) {
         alert(e instanceof Error ? e.message : "채점에 실패했습니다.");
@@ -246,6 +300,44 @@ export default function PracticePage() {
         >
           {loading ? "문제 생성 중..." : "문제 생성하기"}
         </button>
+
+        <button
+          onClick={() => { setHistory(loadHistory()); setShowHistory(!showHistory); }}
+          className="text-sm text-stone-400 underline underline-offset-2 transition hover:text-stone-600"
+        >
+          {showHistory ? "연습 이력 닫기" : "연습 이력 보기"}
+        </button>
+
+        {showHistory && (
+          <div className="w-full max-w-2xl">
+            {history.length === 0 ? (
+              <p className="text-center text-sm text-stone-400">아직 연습 이력이 없습니다.</p>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {history.map((entry) => (
+                  <button
+                    key={entry.id + entry.date}
+                    onClick={() => setViewingEntry(viewingEntry?.date === entry.date ? null : entry)}
+                    className="flex items-center gap-4 rounded-lg border border-stone-200 bg-white px-5 py-3 text-left transition hover:border-emerald-300 hover:bg-emerald-50/50"
+                  >
+                    <span className="text-2xl font-bold text-emerald-600">{entry.score}</span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-stone-700">{entry.domain || "미분류"}</p>
+                      <p className="text-xs text-stone-400">
+                        {new Date(entry.date).toLocaleDateString("ko-KR")} · {entry.difficulty === "basic" ? "기본" : entry.difficulty === "standard" ? "표준" : "심화"} · {entry.essay.length}자
+                      </p>
+                    </div>
+                    <span className="text-xs text-stone-400">{viewingEntry?.date === entry.date ? "▲" : "▼"}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {viewingEntry && (
+          <HistoryDetail entry={viewingEntry} onClose={() => setViewingEntry(null)} />
+        )}
       </div>
     );
   }
@@ -397,6 +489,20 @@ export default function PracticePage() {
           </div>
         </div>
 
+        {submittedEssay && (
+          <details className="rounded-xl border border-stone-200 bg-white shadow-sm">
+            <summary className="cursor-pointer px-6 py-4 font-semibold text-stone-700 hover:text-stone-900">
+              내가 작성한 답안 보기
+            </summary>
+            <div className="border-t border-stone-100 px-6 py-4">
+              <div className="whitespace-pre-wrap text-sm leading-relaxed text-stone-700">
+                {submittedEssay}
+              </div>
+              <p className="mt-3 text-xs text-stone-400">{submittedEssay.length}자</p>
+            </div>
+          </details>
+        )}
+
         {question && (
           <details className="rounded-xl border border-stone-200 bg-white shadow-sm">
             <summary className="cursor-pointer px-6 py-4 font-semibold text-stone-700 hover:text-stone-900">
@@ -418,6 +524,7 @@ export default function PracticePage() {
             setEssay("");
             setQuestion(null);
             setResult(null);
+            setSubmittedEssay("");
             setTimeLeft(DURATION_SECONDS);
           }}
           className="self-center rounded-lg bg-emerald-600 px-8 py-4 font-medium text-white shadow-sm transition hover:bg-emerald-700"
@@ -429,4 +536,79 @@ export default function PracticePage() {
   }
 
   return null;
+}
+
+/* ---------- 이력 상세 보기 ---------- */
+
+function HistoryDetail({ entry, onClose }: { entry: HistoryEntry; onClose: () => void }) {
+  const { result, essay, question } = entry;
+  return (
+    <div className="w-full max-w-4xl rounded-xl border border-stone-200 bg-white shadow-sm">
+      <div className="flex items-center justify-between border-b border-stone-100 px-6 py-4">
+        <div>
+          <h3 className="font-semibold text-stone-800">
+            {new Date(entry.date).toLocaleDateString("ko-KR")} 연습 결과
+          </h3>
+          <p className="text-xs text-stone-400">
+            {entry.domain} · {entry.difficulty === "basic" ? "기본" : entry.difficulty === "standard" ? "표준" : "심화"} · {entry.score}/20점
+          </p>
+        </div>
+        <button onClick={onClose} className="text-sm text-stone-400 hover:text-stone-600">닫기</button>
+      </div>
+      <div className="flex flex-col gap-6 p-6">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[
+            { label: "내용", data: result.breakdown.content },
+            { label: "논리", data: result.breakdown.logic },
+            { label: "표현", data: result.breakdown.expression },
+          ].map(({ label, data }) => (
+            <div key={label} className="rounded-lg bg-stone-50 p-3">
+              <div className="flex items-baseline justify-between">
+                <span className="text-xs font-medium text-stone-500">{label}</span>
+                <span className="text-sm font-bold text-stone-700">{data.score}/{data.maxScore}</span>
+              </div>
+              <p className="mt-1 text-xs text-stone-500">{data.feedback}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-lg bg-emerald-50 p-4">
+            <h4 className="text-sm font-semibold text-emerald-800">잘한 점</h4>
+            <ul className="mt-2 space-y-1 text-xs text-emerald-700">
+              {result.strengths.map((s, i) => <li key={i}>• {s}</li>)}
+            </ul>
+          </div>
+          <div className="rounded-lg bg-amber-50 p-4">
+            <h4 className="text-sm font-semibold text-amber-800">개선할 점</h4>
+            <ul className="mt-2 space-y-1 text-xs text-amber-700">
+              {result.improvements.map((s, i) => <li key={i}>• {s}</li>)}
+            </ul>
+          </div>
+        </div>
+
+        <details className="rounded-lg border border-stone-200">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-stone-600 hover:text-stone-800">
+            작성 답안 ({essay.length}자)
+          </summary>
+          <div className="border-t border-stone-100 px-4 py-3">
+            <div className="whitespace-pre-wrap text-xs leading-relaxed text-stone-600">{essay}</div>
+          </div>
+        </details>
+
+        <details className="rounded-lg border border-stone-200">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-stone-600 hover:text-stone-800">
+            출제 문제
+          </summary>
+          <div className="border-t border-stone-100 px-4 py-3">
+            <ExamPaperView
+              examFormat={question.examFormat}
+              fallbackText={question.promptText}
+              difficulty={question.difficulty}
+            />
+          </div>
+        </details>
+      </div>
+    </div>
+  );
 }
