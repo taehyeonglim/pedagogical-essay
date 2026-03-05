@@ -2,25 +2,23 @@
   "examYears": [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
   "totalExams": 12,
   "topicCategories": {
-    "학생안전·생활지도": [2015],
-    "수업·교수학습": [2016, 2017, 2024, 2025],
-    "학교조직·경영": [2018, 2020],
-    "교육과정·평가": [2019, 2022, 2023, 2026],
-    "교직전문성·윤리": [2021]
+    "교육과정·평가": [2021, 2022, 2024, 2026],
+    "생활지도·상담": [2015, 2019, 2023],
+    "학교경영": [2018, 2020, 2025],
+    "교수학습": [2016, 2017]
   },
   "topicFrequency": [
-    { "topic": "수업·교수학습", "count": 4, "percentage": 33.3 },
     { "topic": "교육과정·평가", "count": 4, "percentage": 33.3 },
-    { "topic": "학교조직·경영", "count": 2, "percentage": 16.7 },
-    { "topic": "학생안전·생활지도", "count": 1, "percentage": 8.3 },
-    { "topic": "교직전문성·윤리", "count": 1, "percentage": 8.3 }
+    { "topic": "생활지도·상담", "count": 3, "percentage": 25.0 },
+    { "topic": "학교경영", "count": 3, "percentage": 25.0 },
+    { "topic": "교수학습", "count": 2, "percentage": 16.7 }
   ],
   "questionStructure": {
     "commonFormat": "대화형 제시문 + 하위 문항",
     "typicalSubQuestions": { "min": 2, "max": 4, "average": 3 },
     "presentationStyle": {
-      "dialogue": { "count": 10, "percentage": 83.3, "years": [2015, 2016, 2017, 2018, 2019, 2022, 2023, 2024, 2025, 2026] },
-      "report": { "count": 2, "percentage": 16.7, "years": [2020, 2021] }
+      "dialogue": { "count": 11, "percentage": 91.7, "years": [2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025, 2026] },
+      "report": { "count": 1, "percentage": 8.3, "years": [2020] }
     }
   },
   "scoringSystem": {

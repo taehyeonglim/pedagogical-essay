@@ -56,10 +56,10 @@ export default function Home() {
       <div className="w-full max-w-3xl rounded-xl border-l-4 border-amber-400 bg-amber-50 p-8">
         <h3 className="text-lg font-semibold text-stone-800">📋 출제 패턴 요약</h3>
         <ul className="mt-4 space-y-2 text-sm text-stone-600">
-          <li>- 총점 20점: 내용 15점 + 체계 5점</li>
-          <li>- 주요 주제: 수업·교수학습(33%), 교육과정·평가(33%)</li>
-          <li>- 대화형 제시문 출제가 83.3%로 주류</li>
-          <li>- 평균 하위 문항 수: 3개</li>
+          <li>- 총점 20점: 내용 15점 + 체계 5점 (2017학년도~)</li>
+          <li>- 주요 주제: 교육과정·평가(33%), 생활지도·상담(25%), 학교경영(25%)</li>
+          <li>- 대화형 제시문 출제가 91.7%로 주류</li>
+          <li>- 평균 하위 문항 수: 3~4개</li>
           <li>- 2021학년도부터 답안지 2매 형식으로 변경</li>
         </ul>
       </div>

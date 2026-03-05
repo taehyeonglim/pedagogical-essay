@@ -46,7 +46,7 @@
       "id": "teaching",
       "name": "교수학습",
       "color": "blue",
-      "years": [2016, 2017, 2021, 2024, 2025],
+      "years": [2016, 2017],
       "theories": [
         {
           "name": "행동주의 (조작적 조건화)",
@@ -133,7 +133,7 @@
       "id": "guidance",
       "name": "생활지도·상담",
       "color": "rose",
-      "years": [2015, 2016, 2019, 2023],
+      "years": [2015, 2019, 2023],
       "theories": [
         {
           "name": "안전교육·위기관리",
@@ -214,7 +214,7 @@
       "id": "professionalism",
       "name": "교직전문성",
       "color": "sky",
-      "years": [2016, 2018, 2020, 2021],
+      "years": [2016, 2018],
       "theories": [
         {
           "name": "반성적 실천 (Schön)",
@@ -391,7 +391,7 @@
   ],
   "statistics": {
     "domainDistribution": [
-      { "domain": "교육과정", "domainId": "curriculum", "count": 4, "years": [2021, 2022, 2024, 2017] },
+      { "domain": "교육과정", "domainId": "curriculum", "count": 3, "years": [2021, 2022, 2024] },
       { "domain": "교수학습", "domainId": "teaching", "count": 2, "years": [2016, 2017] },
       { "domain": "교육평가", "domainId": "assessment", "count": 1, "years": [2026] },
       { "domain": "생활지도·상담", "domainId": "guidance", "count": 3, "years": [2015, 2019, 2023] },
