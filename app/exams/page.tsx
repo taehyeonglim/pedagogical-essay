@@ -158,7 +158,7 @@ export default function ExamsPage() {
       {selectedYear && (
         <div ref={contentRef} className="flex flex-col gap-4 scroll-mt-4">
           {/* 헤더 */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-xl font-bold text-stone-800">
               {selectedYear}학년도 교직논술
             </h2>
@@ -166,7 +166,7 @@ export default function ExamsPage() {
               href={`/exams/${selectedYear}.pdf`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700"
+              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-emerald-700 sm:px-4 sm:py-2 sm:text-sm"
             >
               PDF 새 탭에서 열기
             </a>

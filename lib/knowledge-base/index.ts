@@ -12,8 +12,10 @@ let _patternsCache: ExamPatterns | null = null;
 let _analysisCache: ReturnType<typeof JSON.parse> = null;
 
 function parseQuestionStructure(md: string): QuestionStructure {
-  const subQMatch = md.match(/(\d+)\)/g);
-  const numberOfSubQuestions = subQMatch ? new Set(subQMatch).size : 0;
+  // 하위 문항 섹션만 추출하여 카운트 (배점 기준 등 오매칭 방지)
+  const subSection = md.match(/##\s*하위\s*문항[\s\S]*?(?=##|$)/)?.[0] ?? md;
+  const subQMatch = subSection.match(/^\s*\d+[).]\s/gm);
+  const numberOfSubQuestions = subQMatch ? subQMatch.length : 0;
   const hasIntroScenario = /제시문|대화/.test(md);
   const refMatch = md.match(/\(가\)|\(나\)|\(다\)|\(라\)/g);
   const referenceMaterialCount = refMatch ? new Set(refMatch).size : 0;
@@ -29,10 +31,11 @@ function extractTopic(md: string): string {
 }
 
 function extractSubTopics(md: string): string[] {
-  const lines = md.split("\n");
+  const subSection = md.match(/##\s*하위\s*문항[\s\S]*?(?=##|$)/)?.[0] ?? md;
+  const lines = subSection.split("\n");
   const topics: string[] = [];
   for (const line of lines) {
-    const match = line.match(/^\d+\)\s*(.+)/);
+    const match = line.match(/^\s*\d+[).]\s*(.+)/);
     if (match) topics.push(match[1].trim());
   }
   return topics;
@@ -83,7 +86,10 @@ export function getAllExams(): ExamPaper[] {
   return _examsCache;
 }
 
+let _summariesCache: { year: number; topic: string }[] | null = null;
+
 export function getAllExamSummaries(): { year: number; topic: string }[] {
+  if (_summariesCache) return _summariesCache;
   const files = readdirSync(PARSED_DIR).filter((f) => f.endsWith(".md"));
   const summaries: { year: number; topic: string }[] = [];
   for (const file of files) {
@@ -95,7 +101,8 @@ export function getAllExamSummaries(): { year: number; topic: string }[] {
       } catch { /* skip */ }
     }
   }
-  return summaries.sort((a, b) => a.year - b.year);
+  _summariesCache = summaries.sort((a, b) => a.year - b.year);
+  return _summariesCache;
 }
 
 export function getExamPatterns(): ExamPatterns {

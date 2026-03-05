@@ -254,17 +254,17 @@ export default function PracticePage() {
     const charColor = essay.length < 1000 ? "text-stone-400" : essay.length > 1800 ? "text-amber-600" : "text-emerald-600";
     return (
       <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h1 className="text-xl font-bold text-stone-800">모의 논술 작성</h1>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <span className={`text-sm ${charColor}`}>
               {essay.length}자
-              <span className="ml-1 text-xs text-stone-400">(권장 1,000~1,800자)</span>
+              <span className="ml-1 hidden text-xs text-stone-400 sm:inline">(권장 1,000~1,800자)</span>
             </span>
             <span
               role="timer"
               aria-label={`남은 시간 ${formatTime(timeLeft)}`}
-              className={`rounded-lg px-4 py-2 font-mono text-lg font-bold ${
+              className={`rounded-lg px-3 py-1.5 font-mono text-base font-bold sm:px-4 sm:py-2 sm:text-lg ${
                 timeLeft < 600
                   ? "bg-red-100 text-red-700"
                   : "bg-emerald-100 text-emerald-700"

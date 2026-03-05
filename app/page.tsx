@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center gap-12 py-16">
       <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-stone-800">
+        <h1 className="text-3xl font-bold tracking-tight text-stone-800 sm:text-4xl">
           초등 임용 교직논술 연습
         </h1>
         <p className="mt-4 text-lg text-stone-500">

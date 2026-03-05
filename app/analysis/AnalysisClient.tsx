@@ -372,8 +372,9 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
                     style={{ width: `${statistics.formatDistribution.dialogue.percentage}%` }}
                   />
                 </div>
-                <span className="w-16 text-right text-sm font-medium text-stone-600">
-                  {statistics.formatDistribution.dialogue.count}회 ({statistics.formatDistribution.dialogue.percentage}%)
+                <span className="shrink-0 whitespace-nowrap text-right text-sm font-medium text-stone-600">
+                  {statistics.formatDistribution.dialogue.count}회
+                  <span className="hidden sm:inline"> ({statistics.formatDistribution.dialogue.percentage}%)</span>
                 </span>
               </div>
               <div className="flex items-center gap-3">
@@ -384,8 +385,9 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
                     style={{ width: `${statistics.formatDistribution.report.percentage}%` }}
                   />
                 </div>
-                <span className="w-16 text-right text-sm font-medium text-stone-600">
-                  {statistics.formatDistribution.report.count}회 ({statistics.formatDistribution.report.percentage}%)
+                <span className="shrink-0 whitespace-nowrap text-right text-sm font-medium text-stone-600">
+                  {statistics.formatDistribution.report.count}회
+                  <span className="hidden sm:inline"> ({statistics.formatDistribution.report.percentage}%)</span>
                 </span>
               </div>
             </div>
