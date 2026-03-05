@@ -7,14 +7,7 @@ interface ExamSummary {
   topic: string;
 }
 
-interface Commentary {
-  year: number;
-  modelAnswer: string;
-  problemExplanation: string;
-  pedagogicalBackground: string;
-  references: { title: string; url: string }[];
-  sentenceAnnotations: { sentence: string; annotation: string }[];
-}
+import type { ExamCommentary as Commentary } from "@/lib/types";
 
 type TabKey =
   | "pdf"

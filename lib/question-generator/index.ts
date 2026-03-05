@@ -1,24 +1,6 @@
 import { generateJSON } from "@/lib/ai/gemini";
 import { getAllExams, getExamPatterns, getAnalysis } from "@/lib/knowledge-base";
-import type { GeneratedQuestion, ExamPaper } from "@/lib/types";
-
-interface AnalysisDomain {
-  id: string;
-  name: string;
-  theories: { name: string; years: number[]; description: string }[];
-}
-
-interface AnalysisData {
-  domains: AnalysisDomain[];
-  yearlyAnalysis: { year: number; domain: string; domainId: string; rawMd?: string }[];
-  statistics: {
-    domainDistribution: { domain: string; domainId: string; count: number; years: number[] }[];
-    formatDistribution: { dialogue: { percentage: number }; report: { percentage: number } };
-    scoringChanges: { period: string; content: number; structure: number; note: string }[];
-    recentEmphasis: string[];
-    frequentCombinations: { theories: string[]; years: number[] }[];
-  };
-}
+import type { GeneratedQuestion, ExamPaper, AnalysisData, AnalysisDomain } from "@/lib/types";
 
 const DIFFICULTY_GUIDE: Record<string, string> = {
   basic: "단일 이론 적용, 직접적 질문. 이론의 개념과 특징을 학교 현장 사례에 적용하는 수준.",
@@ -175,7 +157,7 @@ export async function generateQuestion(
   difficulty: "basic" | "standard" | "advanced" = "standard"
 ): Promise<GeneratedQuestion> {
   const exams = getAllExams();
-  const analysis = getAnalysis() as AnalysisData;
+  const analysis = getAnalysis();
   const domain = selectDomain(analysis, difficulty);
   const prompt = buildPrompt(exams, difficulty, analysis, domain);
   const result = await generateJSON<Omit<GeneratedQuestion, "id">>(prompt);

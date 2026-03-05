@@ -15,7 +15,7 @@
   ],
   "questionStructure": {
     "commonFormat": "대화형 제시문 + 하위 문항",
-    "typicalSubQuestions": { "min": 3, "max": 4, "average": 3 },
+    "typicalSubQuestions": { "min": 3, "max": 4, "average": 3.3 },
     "presentationStyle": {
       "dialogue": { "count": 11, "percentage": 91.7, "years": [2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025, 2026] },
       "report": { "count": 1, "percentage": 8.3, "years": [2020] }

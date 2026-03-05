@@ -11,7 +11,7 @@ function lookupTheoryDescriptions(
   for (const name of theoryNames) {
     for (const domain of analysis.domains) {
       const found = domain.theories.find(
-        (t: { name: string; description: string }) => t.name === name
+        (t) => t.name === name || t.name.includes(name) || name.includes(t.name)
       );
       if (found) {
         results.push({ name: found.name, description: found.description });

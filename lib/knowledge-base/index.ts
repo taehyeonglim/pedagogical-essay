@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync } from "fs";
 import { join } from "path";
-import type { ExamPaper, ExamPatterns, QuestionStructure } from "@/lib/types";
+import type { ExamPaper, ExamPatterns, ExamCommentary, AnalysisData, QuestionStructure } from "@/lib/types";
 
 const PARSED_DIR = join(process.cwd(), "data", "parsed");
 const COMMENTARY_DIR = join(process.cwd(), "data", "commentary");
@@ -9,7 +9,7 @@ const ANALYSIS_FILE = join(process.cwd(), "data", "analysis.json");
 
 let _examsCache: ExamPaper[] | null = null;
 let _patternsCache: ExamPatterns | null = null;
-let _analysisCache: ReturnType<typeof JSON.parse> = null;
+let _analysisCache: AnalysisData | null = null;
 
 function parseQuestionStructure(md: string): QuestionStructure {
   // 하위 문항 섹션만 추출하여 카운트 (배점 기준 등 오매칭 방지)
@@ -109,23 +109,14 @@ export function getExamPatterns(): ExamPatterns {
   if (_patternsCache) return _patternsCache;
   const raw = readFileSync(PATTERNS_FILE, "utf-8");
   _patternsCache = JSON.parse(raw) as ExamPatterns;
-  return _patternsCache!;
+  return _patternsCache;
 }
 
-export function getAnalysis() {
+export function getAnalysis(): AnalysisData {
   if (_analysisCache) return _analysisCache;
   const raw = readFileSync(ANALYSIS_FILE, "utf-8");
-  _analysisCache = JSON.parse(raw);
+  _analysisCache = JSON.parse(raw) as AnalysisData;
   return _analysisCache;
-}
-
-export interface ExamCommentary {
-  year: number;
-  modelAnswer: string;
-  problemExplanation: string;
-  pedagogicalBackground: string;
-  references: { title: string; url: string }[];
-  sentenceAnnotations: { sentence: string; annotation: string }[];
 }
 
 export function getCommentary(year: number): ExamCommentary | null {

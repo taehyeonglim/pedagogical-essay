@@ -74,10 +74,15 @@ export interface PracticeSession {
 export interface ExamPatterns {
   examYears: number[];
   totalExams: number;
+  topicCategories: Record<string, number[]>;
   topicFrequency: { topic: string; count: number; percentage: number }[];
   questionStructure: {
     commonFormat: string;
     typicalSubQuestions: { min: number; max: number; average: number };
+    presentationStyle: {
+      dialogue: { count: number; percentage: number; years: number[] };
+      report: { count: number; percentage: number; years: number[] };
+    };
   };
   scoringSystem: {
     totalScore: number;
@@ -85,5 +90,74 @@ export interface ExamPatterns {
       content: { score: number; label: string };
       structure: { score: number; label: string };
     };
+    structureDetail: {
+      logicalCoherence: { score: number; label: string };
+      spelling: { score: string; label: string };
+      length: { score: string; label: string };
+    };
   };
+  wordLimit: {
+    early: { years: number[]; format: string; penaltyRange: string };
+    recent: { years: number[]; format: string; note: string };
+  };
+  writingGuidelines: string[];
+  keyPatterns: string[];
+}
+
+// --- Commentary ---
+
+export interface ExamCommentary {
+  year: number;
+  modelAnswer: string;
+  problemExplanation: string;
+  pedagogicalBackground: string;
+  references: { title: string; url: string }[];
+  sentenceAnnotations: { sentence: string; annotation: string }[];
+}
+
+// --- Analysis ---
+
+export interface AnalysisTheory {
+  name: string;
+  years: number[];
+  description: string;
+  references: { title: string; url: string }[];
+}
+
+export interface AnalysisDomain {
+  id: string;
+  name: string;
+  color: string;
+  years: number[];
+  theories: AnalysisTheory[];
+}
+
+export interface AnalysisYearlyItem {
+  year: number;
+  domain: string;
+  domainId: string;
+  topic: string;
+  format: string;
+  subQuestions: number;
+  scoring: { content: number; structure: number };
+  keyTheories: string[];
+  keywords: string[];
+  detail: string;
+}
+
+export interface AnalysisStatistics {
+  domainDistribution: { domain: string; domainId: string; count: number; years: number[] }[];
+  scoringChanges: { period: string; format: string; content: number; structure: number; note: string }[];
+  formatDistribution: {
+    dialogue: { count: number; percentage: number };
+    report: { count: number; percentage: number };
+  };
+  recentEmphasis: string[];
+  frequentCombinations: { theories: string[]; years: number[] }[];
+}
+
+export interface AnalysisData {
+  domains: AnalysisDomain[];
+  yearlyAnalysis: AnalysisYearlyItem[];
+  statistics: AnalysisStatistics;
 }

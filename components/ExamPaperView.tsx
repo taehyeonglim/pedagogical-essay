@@ -1,5 +1,3 @@
-"use client";
-
 import type { ExamPaperFormat } from "@/lib/types";
 
 interface ExamPaperViewProps {

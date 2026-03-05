@@ -1,50 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-
-interface Theory {
-  name: string;
-  years: number[];
-  description: string;
-  references: { title: string; url: string }[];
-}
-
-interface Domain {
-  id: string;
-  name: string;
-  color: string;
-  years: number[];
-  theories: Theory[];
-}
-
-interface YearlyItem {
-  year: number;
-  domain: string;
-  domainId: string;
-  topic: string;
-  format: string;
-  subQuestions: number;
-  scoring: { content: number; structure: number };
-  keyTheories: string[];
-  keywords: string[];
-  detail: string;
-}
-
-interface Statistics {
-  scoringChanges: { period: string; format: string; content: number; structure: number; note: string }[];
-  formatDistribution: {
-    dialogue: { count: number; percentage: number };
-    report: { count: number; percentage: number };
-  };
-  recentEmphasis: string[];
-  frequentCombinations: { theories: string[]; years: number[] }[];
-}
-
-export interface AnalysisData {
-  domains: Domain[];
-  yearlyAnalysis: YearlyItem[];
-  statistics: Statistics;
-}
+import type { AnalysisData } from "@/lib/types";
 
 const DOMAIN_COLORS: Record<string, { bg: string; text: string; bar: string; light: string; border: string }> = {
   emerald: { bg: "bg-emerald-100", text: "text-emerald-700", bar: "bg-emerald-500", light: "bg-emerald-50", border: "border-emerald-300" },
