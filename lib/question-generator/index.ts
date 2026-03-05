@@ -34,18 +34,18 @@ function selectDomain(
   const dist = analysis.statistics.domainDistribution;
 
   if (difficulty === "basic") {
-    // 출제 빈도 높은 영역: 교육과정, 생활지도·상담, 학교경영
     const highFreqIds = dist
       .filter((d) => d.count >= 3)
       .map((d) => d.domainId);
     const candidates = domains.filter((d) => highFreqIds.includes(d.id));
-    return candidates[Math.floor(Math.random() * candidates.length)];
+    if (candidates.length > 0) {
+      return candidates[Math.floor(Math.random() * candidates.length)];
+    }
   }
 
   if (difficulty === "advanced") {
-    // 출제 빈도 낮거나 복합 출제: 교육평가, 교직전문성
     const lowFreqIds = dist
-      .filter((d) => d.count <= 2)
+      .filter((d) => d.count > 0 && d.count <= 2)
       .map((d) => d.domainId);
     const candidates = domains.filter((d) => lowFreqIds.includes(d.id));
     if (candidates.length > 0) {

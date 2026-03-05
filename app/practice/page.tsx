@@ -4,25 +4,69 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import type { GeneratedQuestion, GradeResult } from "@/lib/types";
 import ExamPaperView from "@/components/ExamPaperView";
 
+const DURATION_SECONDS = 60 * 60;
+const STORAGE_KEY = "practice-draft";
+const AUTOSAVE_INTERVAL = 10_000;
+
+interface DraftData {
+  essay: string;
+  question: GeneratedQuestion;
+  endTime: number;
+}
+
+function loadDraft(): DraftData | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw) as DraftData;
+    if (!data.essay || !data.question || !data.endTime) return null;
+    if (Date.now() - data.endTime > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function saveDraft(essay: string, question: GeneratedQuestion, endTime: number) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ essay, question, endTime }));
+  } catch { /* ignore */ }
+}
+
+function clearDraft() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
+}
+
 export default function PracticePage() {
   const [step, setStep] = useState<"setup" | "writing" | "grading" | "result">("setup");
   const [difficulty, setDifficulty] = useState<"basic" | "standard" | "advanced">("standard");
   const [question, setQuestion] = useState<GeneratedQuestion | null>(null);
   const [essay, setEssay] = useState("");
   const [result, setResult] = useState<GradeResult | null>(null);
-  const [timeLeft, setTimeLeft] = useState(90 * 60);
+  const [timeLeft, setTimeLeft] = useState(DURATION_SECONDS);
   const [loading, setLoading] = useState(false);
+  const [hasDraft, setHasDraft] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const endTimeRef = useRef<number>(0);
+  const autoSubmittedRef = useRef(false);
 
-  const startTimer = useCallback(() => {
+  useEffect(() => {
+    const draft = loadDraft();
+    if (draft) setHasDraft(true);
+  }, []);
+
+  const startTimer = useCallback((endTime?: number) => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    endTimeRef.current = endTime ?? Date.now() + DURATION_SECONDS * 1000;
     timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          if (timerRef.current) clearInterval(timerRef.current);
-          return 0;
-        }
-        return prev - 1;
-      });
+      const remaining = Math.max(0, Math.round((endTimeRef.current - Date.now()) / 1000));
+      setTimeLeft(remaining);
+      if (remaining <= 0 && timerRef.current) {
+        clearInterval(timerRef.current);
+      }
     }, 1000);
   }, []);
 
@@ -32,10 +76,49 @@ export default function PracticePage() {
     };
   }, []);
 
+  // beforeunload 보호
+  useEffect(() => {
+    if (step !== "writing" || !essay) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [step, essay]);
+
+  // 자동 저장
+  useEffect(() => {
+    if (step !== "writing" || !question) return;
+    const id = setInterval(() => {
+      saveDraft(essay, question, endTimeRef.current);
+    }, AUTOSAVE_INTERVAL);
+    return () => clearInterval(id);
+  }, [step, essay, question]);
+
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  };
+
+  const handleRecover = () => {
+    const draft = loadDraft();
+    if (!draft) return;
+    setQuestion(draft.question);
+    setEssay(draft.essay);
+    const remaining = Math.max(0, Math.round((draft.endTime - Date.now()) / 1000));
+    setTimeLeft(remaining);
+    setStep("writing");
+    setHasDraft(false);
+    if (remaining > 0) {
+      autoSubmittedRef.current = false;
+      startTimer(draft.endTime);
+    } else {
+      autoSubmittedRef.current = true;
+    }
+  };
+
+  const handleDismissDraft = () => {
+    clearDraft();
+    setHasDraft(false);
   };
 
   const handleGenerate = async () => {
@@ -51,7 +134,8 @@ export default function PracticePage() {
       if (data.error) throw new Error(data.error);
       setQuestion(data);
       setStep("writing");
-      setTimeLeft(90 * 60);
+      setTimeLeft(DURATION_SECONDS);
+      autoSubmittedRef.current = false;
       startTimer();
     } catch (e) {
       alert(e instanceof Error ? e.message : "문제 생성에 실패했습니다.");
@@ -63,6 +147,7 @@ export default function PracticePage() {
   const submitForGrading = useCallback(
     async (essayText: string, q: GeneratedQuestion, isAutoSubmit = false) => {
       if (timerRef.current) clearInterval(timerRef.current);
+      clearDraft();
       setStep("grading");
       setLoading(true);
       try {
@@ -78,13 +163,9 @@ export default function PracticePage() {
         setStep("result");
       } catch (e) {
         alert(e instanceof Error ? e.message : "채점에 실패했습니다.");
-        if (isAutoSubmit) {
-          setStep("setup");
-          setEssay("");
-          setQuestion(null);
-        } else {
-          setStep("writing");
-          startTimer();
+        setStep("writing");
+        if (!isAutoSubmit) {
+          startTimer(endTimeRef.current);
         }
       } finally {
         setLoading(false);
@@ -94,7 +175,7 @@ export default function PracticePage() {
   );
 
   const handleSubmit = () => {
-    if (!question) return;
+    if (!question || loading) return;
     if (essay.length < 100) {
       alert("최소 100자 이상 작성해주세요.");
       return;
@@ -104,14 +185,12 @@ export default function PracticePage() {
 
   // 타이머 만료 시 자동 제출
   useEffect(() => {
-    if (timeLeft > 0 || step !== "writing") return;
+    if (timeLeft > 0 || step !== "writing" || autoSubmittedRef.current) return;
+    autoSubmittedRef.current = true;
     if (question && essay.length >= 100) {
       submitForGrading(essay, question, true);
     } else {
-      alert("시간이 종료되었습니다.");
-      setStep("setup");
-      setEssay("");
-      setQuestion(null);
+      alert("시간이 종료되었습니다. 제출 및 채점 버튼을 눌러 수동 제출해 주세요.");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft]);
@@ -119,14 +198,36 @@ export default function PracticePage() {
   if (step === "setup") {
     return (
       <div className="flex flex-col items-center gap-8 py-16">
-        <h1 className="text-2xl font-bold text-stone-800">✍️ 모의 논술 연습</h1>
+        <h1 className="text-2xl font-bold text-stone-800">모의 논술 연습</h1>
         <p className="text-stone-500">난이도를 선택하고 모의 문제를 생성하세요.</p>
 
-        <div className="flex gap-3">
+        {hasDraft && (
+          <div className="w-full max-w-md rounded-xl border border-amber-300 bg-amber-50 p-5">
+            <p className="text-sm font-medium text-amber-800">이전에 작성 중이던 답안이 있습니다.</p>
+            <div className="mt-3 flex gap-2">
+              <button
+                onClick={handleRecover}
+                className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-700"
+              >
+                이어서 작성
+              </button>
+              <button
+                onClick={handleDismissDraft}
+                className="rounded-lg border border-amber-300 px-4 py-2 text-sm text-amber-700 transition hover:bg-amber-100"
+              >
+                삭제
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="flex gap-3" role="radiogroup" aria-label="난이도 선택">
           {(["basic", "standard", "advanced"] as const).map((d) => (
             <button
               key={d}
               onClick={() => setDifficulty(d)}
+              role="radio"
+              aria-checked={difficulty === d}
               className={`rounded-lg border-2 px-6 py-4 text-sm font-medium transition ${
                 difficulty === d
                   ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm"
@@ -150,13 +251,19 @@ export default function PracticePage() {
   }
 
   if (step === "writing" && question) {
+    const charColor = essay.length < 1000 ? "text-stone-400" : essay.length > 1800 ? "text-amber-600" : "text-emerald-600";
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-stone-800">모의 논술 작성</h1>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-stone-500">{essay.length}자</span>
+            <span className={`text-sm ${charColor}`}>
+              {essay.length}자
+              <span className="ml-1 text-xs text-stone-400">(권장 1,000~1,800자)</span>
+            </span>
             <span
+              role="timer"
+              aria-label={`남은 시간 ${formatTime(timeLeft)}`}
               className={`rounded-lg px-4 py-2 font-mono text-lg font-bold ${
                 timeLeft < 600
                   ? "bg-red-100 text-red-700"
@@ -195,6 +302,7 @@ export default function PracticePage() {
             onClick={() => {
               if (!confirm("정말 포기하시겠습니까? 작성 중인 답안이 삭제됩니다.")) return;
               if (timerRef.current) clearInterval(timerRef.current);
+              clearDraft();
               setStep("setup");
               setEssay("");
               setQuestion(null);
@@ -205,7 +313,8 @@ export default function PracticePage() {
           </button>
           <button
             onClick={handleSubmit}
-            className="rounded-lg bg-amber-600 px-8 py-4 text-sm font-medium text-white shadow-sm transition hover:bg-amber-700"
+            disabled={loading}
+            className="rounded-lg bg-amber-600 px-8 py-4 text-sm font-medium text-white shadow-sm transition hover:bg-amber-700 disabled:opacity-50"
           >
             제출 및 채점
           </button>
@@ -216,7 +325,7 @@ export default function PracticePage() {
 
   if (step === "grading") {
     return (
-      <div className="flex flex-col items-center gap-4 py-32">
+      <div className="flex flex-col items-center gap-4 py-32" role="status" aria-label="채점 중">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-600" />
         <p className="text-stone-500">AI가 논술을 채점하고 있습니다...</p>
       </div>
@@ -226,7 +335,7 @@ export default function PracticePage() {
   if (step === "result" && result) {
     return (
       <div className="flex flex-col gap-8">
-        <h1 className="text-2xl font-bold text-stone-800">📊 채점 결과</h1>
+        <h1 className="text-2xl font-bold text-stone-800">채점 결과</h1>
 
         <div className="rounded-xl border border-stone-200 bg-white p-8 shadow-sm">
           <div className="text-center">
@@ -288,13 +397,28 @@ export default function PracticePage() {
           </div>
         </div>
 
+        {question && (
+          <details className="rounded-xl border border-stone-200 bg-white shadow-sm">
+            <summary className="cursor-pointer px-6 py-4 font-semibold text-stone-700 hover:text-stone-900">
+              출제 문제 다시 보기
+            </summary>
+            <div className="border-t border-stone-100 px-6 py-4">
+              <ExamPaperView
+                examFormat={question.examFormat}
+                fallbackText={question.promptText}
+                difficulty={question.difficulty}
+              />
+            </div>
+          </details>
+        )}
+
         <button
           onClick={() => {
             setStep("setup");
             setEssay("");
             setQuestion(null);
             setResult(null);
-            setTimeLeft(90 * 60);
+            setTimeLeft(DURATION_SECONDS);
           }}
           className="self-center rounded-lg bg-emerald-600 px-8 py-4 font-medium text-white shadow-sm transition hover:bg-emerald-700"
         >

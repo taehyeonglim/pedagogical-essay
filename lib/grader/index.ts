@@ -85,5 +85,12 @@ export async function gradeEssay(
   question: GeneratedQuestion
 ): Promise<GradeResult> {
   const prompt = buildGradePrompt(essay, question);
-  return await generateJSON<GradeResult>(prompt);
+  const result = await generateJSON<GradeResult>(prompt);
+
+  result.breakdown.content.score = Math.max(0, Math.min(result.breakdown.content.score, result.breakdown.content.maxScore));
+  result.breakdown.logic.score = Math.max(0, Math.min(result.breakdown.logic.score, result.breakdown.logic.maxScore));
+  result.breakdown.expression.score = Math.max(0, Math.min(result.breakdown.expression.score, result.breakdown.expression.maxScore));
+  result.overallScore = result.breakdown.content.score + result.breakdown.logic.score + result.breakdown.expression.score;
+
+  return result;
 }

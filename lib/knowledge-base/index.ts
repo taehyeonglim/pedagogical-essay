@@ -7,6 +7,10 @@ const COMMENTARY_DIR = join(process.cwd(), "data", "commentary");
 const PATTERNS_FILE = join(process.cwd(), "data", "patterns.json");
 const ANALYSIS_FILE = join(process.cwd(), "data", "analysis.json");
 
+let _examsCache: ExamPaper[] | null = null;
+let _patternsCache: ExamPatterns | null = null;
+let _analysisCache: ReturnType<typeof JSON.parse> = null;
+
 function parseQuestionStructure(md: string): QuestionStructure {
   const subQMatch = md.match(/(\d+)\)/g);
   const numberOfSubQuestions = subQMatch ? new Set(subQMatch).size : 0;
@@ -65,6 +69,7 @@ export function getExam(year: number): ExamPaper | null {
 }
 
 export function getAllExams(): ExamPaper[] {
+  if (_examsCache) return _examsCache;
   const files = readdirSync(PARSED_DIR).filter((f) => f.endsWith(".md"));
   const exams: ExamPaper[] = [];
   for (const file of files) {
@@ -74,7 +79,8 @@ export function getAllExams(): ExamPaper[] {
       if (exam) exams.push(exam);
     }
   }
-  return exams.sort((a, b) => a.year - b.year);
+  _examsCache = exams.sort((a, b) => a.year - b.year);
+  return _examsCache;
 }
 
 export function getAllExamSummaries(): { year: number; topic: string }[] {
@@ -93,13 +99,17 @@ export function getAllExamSummaries(): { year: number; topic: string }[] {
 }
 
 export function getExamPatterns(): ExamPatterns {
+  if (_patternsCache) return _patternsCache;
   const raw = readFileSync(PATTERNS_FILE, "utf-8");
-  return JSON.parse(raw);
+  _patternsCache = JSON.parse(raw) as ExamPatterns;
+  return _patternsCache!;
 }
 
 export function getAnalysis() {
+  if (_analysisCache) return _analysisCache;
   const raw = readFileSync(ANALYSIS_FILE, "utf-8");
-  return JSON.parse(raw);
+  _analysisCache = JSON.parse(raw);
+  return _analysisCache;
 }
 
 export interface ExamCommentary {

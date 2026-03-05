@@ -7,8 +7,11 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { essay, question } = body as { essay: string; question: GeneratedQuestion };
 
-    if (!essay || !question) {
-      return NextResponse.json({ error: "essay와 question이 필요합니다" }, { status: 400 });
+    if (!essay || typeof essay !== "string") {
+      return NextResponse.json({ error: "essay는 문자열이어야 합니다" }, { status: 400 });
+    }
+    if (!question || typeof question !== "object" || !question.promptText) {
+      return NextResponse.json({ error: "유효한 question 객체가 필요합니다" }, { status: 400 });
     }
 
     const result = await gradeEssay(essay, question);
