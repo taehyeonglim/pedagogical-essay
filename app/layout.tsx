@@ -25,7 +25,7 @@ export default function RootLayout({
                 href="/exams"
                 className="rounded-lg px-3 py-2 text-emerald-100 transition hover:bg-emerald-600 hover:text-white"
               >
-                기출 열람
+                기출 열람 및 해설
               </Link>
               <Link
                 href="/practice"

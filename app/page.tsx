@@ -19,7 +19,7 @@ export default function Home() {
         >
           <div className="mb-3 text-3xl">📖</div>
           <h2 className="text-xl font-semibold text-stone-800 group-hover:text-emerald-700">
-            기출 열람
+            기출 열람 및 해설
           </h2>
           <p className="mt-2 text-sm text-stone-500">
             12년간(2015~2026) 기출문제를 확인하고 출제 패턴을 분석합니다.

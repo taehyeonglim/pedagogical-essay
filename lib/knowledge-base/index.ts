@@ -3,6 +3,7 @@ import { join } from "path";
 import type { ExamPaper, ExamPatterns, QuestionStructure } from "@/lib/types";
 
 const PARSED_DIR = join(process.cwd(), "data", "parsed");
+const COMMENTARY_DIR = join(process.cwd(), "data", "commentary");
 const PATTERNS_FILE = join(process.cwd(), "data", "patterns.json");
 const ANALYSIS_FILE = join(process.cwd(), "data", "analysis.json");
 
@@ -84,4 +85,23 @@ export function getExamPatterns(): ExamPatterns {
 export function getAnalysis() {
   const raw = readFileSync(ANALYSIS_FILE, "utf-8");
   return JSON.parse(raw);
+}
+
+export interface ExamCommentary {
+  year: number;
+  modelAnswer: string;
+  problemExplanation: string;
+  pedagogicalBackground: string;
+  references: { title: string; url: string }[];
+  sentenceAnnotations: { sentence: string; annotation: string }[];
+}
+
+export function getCommentary(year: number): ExamCommentary | null {
+  try {
+    const filePath = join(COMMENTARY_DIR, `${year}.json`);
+    const raw = readFileSync(filePath, "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
 }
