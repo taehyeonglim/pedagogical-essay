@@ -78,7 +78,7 @@
         {
           "name": "협동학습 (Jigsaw, STAD)",
           "years": [2017],
-          "description": "소집단 내 긍정적 상호의존성을 기반으로 한 학습 방법이다. STAD(성취과제 분담)는 팀 보상 구조로 개인 책무성을 강화하고, Jigsaw(직소)는 전문가 집단 활동 후 원래 집단에서 상호 교수하는 구조이다.",
+          "description": "소집단 내 긍정적 상호의존성을 기반으로 한 학습 방법이다. STAD(모둠성취분담)는 팀 보상 구조로 개인 책무성을 강화하고, Jigsaw(직소)는 전문가 집단 활동 후 원래 집단에서 상호 교수하는 구조이다.",
           "references": [
             { "title": "Wikipedia: Cooperative learning", "url": "https://en.wikipedia.org/wiki/Cooperative_learning" },
             { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" }
@@ -258,7 +258,7 @@
     },
     {
       "year": 2016,
-      "topic": "학생 행동 관리와 학습이론의 적용",
+      "topic": "수업 중 학생 행동 관리 방법과 학습이론적 기반",
       "domain": "교수학습",
       "domainId": "teaching",
       "format": "대화형",
@@ -294,7 +294,7 @@
     },
     {
       "year": 2019,
-      "topic": "학생 생활지도와 상담적 접근",
+      "topic": "학생 지도와 상담 방안 모색",
       "domain": "생활지도·상담",
       "domainId": "guidance",
       "format": "대화형",
@@ -306,7 +306,7 @@
     },
     {
       "year": 2020,
-      "topic": "학교 조직 진단을 통한 학교효과성 및 교사리더십 향상",
+      "topic": "학교조직진단 결과 보고서에 기반한 학교 교육의 변화와 교사 역량 강화",
       "domain": "학교경영",
       "domainId": "management",
       "format": "보고서형",
@@ -330,7 +330,7 @@
     },
     {
       "year": 2022,
-      "topic": "교육과정 자율성과 유연한 운영 전략",
+      "topic": "교육과정 자율성에 관한 세미나",
       "domain": "교육과정",
       "domainId": "curriculum",
       "format": "대화형",
@@ -342,7 +342,7 @@
     },
     {
       "year": 2023,
-      "topic": "대인관계 능력 향상을 위한 생활지도·상담 협력 체계",
+      "topic": "생활지도와 상담을 위한 교사 협력 지원 체제 및 상담 목표 설정",
       "domain": "생활지도·상담",
       "domainId": "guidance",
       "format": "대화형",
@@ -366,7 +366,7 @@
     },
     {
       "year": 2025,
-      "topic": "학교 맥락 분석 기반 학급경영 성찰 및 개선",
+      "topic": "학교실태 분석 자료와 교사 대화에 근거한 학급경영 성찰 및 개선 방안",
       "domain": "학교경영",
       "domainId": "management",
       "format": "대화형",
@@ -378,7 +378,7 @@
     },
     {
       "year": 2026,
-      "topic": "단원 설계, 평가 타당도 및 루브릭 개발·활용",
+      "topic": "교사의 단원 설계, 평가의 타당성 및 방법, 채점기준(루브릭)의 역할",
       "domain": "교육평가",
       "domainId": "assessment",
       "format": "대화형",
