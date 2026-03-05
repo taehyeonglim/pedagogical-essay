@@ -46,6 +46,7 @@ export default function PracticePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ difficulty }),
       });
+      if (!res.ok) throw new Error("문제 생성 요청 실패");
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setQuestion(data);
@@ -59,33 +60,61 @@ export default function PracticePage() {
     }
   };
 
-  const handleSubmit = async () => {
+  const submitForGrading = useCallback(
+    async (essayText: string, q: GeneratedQuestion, isAutoSubmit = false) => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      setStep("grading");
+      setLoading(true);
+      try {
+        const res = await fetch("/api/grade", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ essay: essayText, question: q }),
+        });
+        if (!res.ok) throw new Error("채점 요청 실패");
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        setResult(data);
+        setStep("result");
+      } catch (e) {
+        alert(e instanceof Error ? e.message : "채점에 실패했습니다.");
+        if (isAutoSubmit) {
+          setStep("setup");
+          setEssay("");
+          setQuestion(null);
+        } else {
+          setStep("writing");
+          startTimer();
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [startTimer]
+  );
+
+  const handleSubmit = () => {
     if (!question) return;
     if (essay.length < 100) {
       alert("최소 100자 이상 작성해주세요.");
       return;
     }
-    if (timerRef.current) clearInterval(timerRef.current);
-    setStep("grading");
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/grade", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ essay, question }),
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      setResult(data);
-      setStep("result");
-    } catch (e) {
-      alert(e instanceof Error ? e.message : "채점에 실패했습니다.");
-      setStep("writing");
-    } finally {
-      setLoading(false);
-    }
+    submitForGrading(essay, question);
   };
+
+  // 타이머 만료 시 자동 제출
+  useEffect(() => {
+    if (timeLeft > 0 || step !== "writing") return;
+    if (question && essay.length >= 100) {
+      submitForGrading(essay, question, true);
+    } else {
+      alert("시간이 종료되었습니다.");
+      setStep("setup");
+      setEssay("");
+      setQuestion(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft]);
 
   if (step === "setup") {
     return (
@@ -164,6 +193,7 @@ export default function PracticePage() {
         <div className="flex justify-end gap-3">
           <button
             onClick={() => {
+              if (!confirm("정말 포기하시겠습니까? 작성 중인 답안이 삭제됩니다.")) return;
               if (timerRef.current) clearInterval(timerRef.current);
               setStep("setup");
               setEssay("");

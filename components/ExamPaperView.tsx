@@ -36,7 +36,7 @@ export default function ExamPaperView({
       className="mx-auto max-w-4xl border-2 border-stone-800 bg-white shadow-2xl"
     >
       {/* 헤더 */}
-      <div className="border-b-4 border-double border-stone-800 px-8 py-6 text-center">
+      <div className="border-b-4 border-double border-stone-800 px-4 py-4 text-center sm:px-8 sm:py-6">
         <div className="mb-1 text-sm text-stone-500">교육부</div>
         <h1 className="text-xl font-bold tracking-wider text-stone-900">
           {examFormat.title}
@@ -47,8 +47,8 @@ export default function ExamPaperView({
       </div>
 
       {/* 수험 정보 */}
-      <div className="flex flex-wrap items-center justify-between border-b border-stone-300 px-8 py-3 text-sm text-stone-600">
-        <div className="flex gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-300 px-4 py-3 text-xs text-stone-600 sm:px-8 sm:text-sm">
+        <div className="flex flex-wrap gap-3 sm:gap-6">
           <span>
             수험번호:{" "}
             <span className="inline-block w-28 border-b border-stone-400" />
@@ -58,7 +58,7 @@ export default function ExamPaperView({
             <span className="inline-block w-20 border-b border-stone-400" />
           </span>
         </div>
-        <div className="flex gap-6">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-6">
           <span>시험 시간: 60분</span>
           <span>배점: 20점</span>
           <span className="rounded bg-stone-100 px-2 py-0.5 text-xs font-medium text-stone-500">
@@ -68,7 +68,7 @@ export default function ExamPaperView({
       </div>
 
       {/* 본문 */}
-      <div className="px-8 py-6">
+      <div className="px-4 py-4 sm:px-8 sm:py-6">
         {/* 주제 */}
         <div className="mb-6 rounded border border-stone-200 bg-stone-50 px-4 py-3">
           <span className="text-xs font-semibold text-stone-500">주제</span>
