@@ -33,3 +33,9 @@ next-env.d.ts
 *.db
 *.db-journal
 .vercel
+
+# claude code
+.claude/
+
+# firebase
+firebase-debug.log
