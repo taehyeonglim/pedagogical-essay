@@ -1,6 +1,8 @@
 import { generateJSON } from "@/lib/ai/gemini";
+import { createSignedQuestion } from "@/lib/question-auth";
+import { normalizeGeneratedQuestionPayload } from "@/lib/generated-question";
 import { getAllExams, getExamPatterns, getAnalysis } from "@/lib/knowledge-base";
-import type { GeneratedQuestion, ExamPaper, AnalysisData, AnalysisDomain } from "@/lib/types";
+import type { GeneratedQuestion, ExamPaper, AnalysisData, AnalysisDomain, QuestionDifficulty } from "@/lib/types";
 
 const DIFFICULTY_GUIDE: Record<string, string> = {
   basic: "단일 이론 적용, 직접적 질문. 이론의 개념과 특징을 학교 현장 사례에 적용하는 수준.",
@@ -154,16 +156,14 @@ ${sampleExamText}
 }
 
 export async function generateQuestion(
-  difficulty: "basic" | "standard" | "advanced" = "standard"
+  difficulty: QuestionDifficulty = "standard"
 ): Promise<GeneratedQuestion> {
   const exams = getAllExams();
   const analysis = getAnalysis();
   const domain = selectDomain(analysis, difficulty);
   const prompt = buildPrompt(exams, difficulty, analysis, domain);
-  const result = await generateJSON<Omit<GeneratedQuestion, "id">>(prompt);
+  const raw = await generateJSON<unknown>(prompt);
+  const normalized = normalizeGeneratedQuestionPayload(raw, difficulty);
 
-  return {
-    id: crypto.randomUUID(),
-    ...result,
-  };
+  return createSignedQuestion(normalized);
 }

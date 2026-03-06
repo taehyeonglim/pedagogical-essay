@@ -29,15 +29,24 @@ export interface QuestionStructure {
   wordLimit: number;
 }
 
+export type QuestionDifficulty = "basic" | "standard" | "advanced";
+
+export interface GeneratedQuestionAuth {
+  issuedAt: number;
+  expiresAt: number;
+  signature: string;
+}
+
 export interface GeneratedQuestion {
   id: string;
   promptText: string;
   referenceMaterials: string[];
   expectedStructure: QuestionStructure;
-  difficulty: "basic" | "standard" | "advanced";
+  difficulty: QuestionDifficulty;
   targetTheories?: string[];
   targetDomain?: string;
   examFormat?: ExamPaperFormat;
+  auth: GeneratedQuestionAuth;
 }
 
 export interface ScoreItem {

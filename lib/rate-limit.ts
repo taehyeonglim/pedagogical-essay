@@ -10,12 +10,13 @@ function scheduleCleanup() {
   if (_cleanupScheduled) return;
   _cleanupScheduled = true;
   if (typeof setInterval !== "undefined") {
-    setInterval(() => {
+    const timer = setInterval(() => {
       const now = Date.now();
       for (const [ip, entry] of requests) {
         if (now > entry.resetTime) requests.delete(ip);
       }
     }, WINDOW_MS);
+    timer.unref?.();
   }
 }
 
@@ -44,13 +45,30 @@ export function checkRateLimit(ip: string): { ok: boolean; remaining: number } {
 }
 
 export function getClientIP(request: Request): string {
-  // Vercel 환경에서는 x-real-ip가 가장 신뢰할 수 있음
-  const realIp = request.headers.get("x-real-ip");
-  if (realIp) return realIp.trim();
+  const directHeaders = [
+    "x-real-ip",
+    "x-forwarded-for",
+    "cf-connecting-ip",
+    "x-vercel-forwarded-for",
+    "fly-client-ip",
+    "true-client-ip",
+    "x-client-ip",
+  ];
 
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0].trim();
+  for (const header of directHeaders) {
+    const value = request.headers.get(header);
+    if (!value) continue;
+    const first = value.split(",")[0]?.trim();
+    if (first) return first;
+  }
 
-  // IP를 알 수 없는 경우 요청별 고유 식별 불가 — 제한 적용하지 않도록 고유 키 생성
-  return `anon_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  const forwarded = request.headers.get("forwarded");
+  if (forwarded) {
+    const match = forwarded.match(/for="?([^;,\s"]+)/i);
+    if (match?.[1]) return match[1];
+  }
+
+  const userAgent = request.headers.get("user-agent")?.trim().slice(0, 120) ?? "unknown-agent";
+  const language = request.headers.get("accept-language")?.split(",")[0]?.trim() ?? "unknown-lang";
+  return `anon:${userAgent}:${language}`;
 }

@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { QUESTION_DURATION_MS, normalizeGeneratedQuestion } from "@/lib/generated-question";
 import type { GeneratedQuestion, GradeResult } from "@/lib/types";
 import ExamPaperView from "@/components/ExamPaperView";
 
-const DURATION_SECONDS = 60 * 60;
+const DURATION_SECONDS = QUESTION_DURATION_MS / 1000;
 const STORAGE_KEY = "practice-draft";
 const HISTORY_KEY = "practice-history";
 const AUTOSAVE_INTERVAL = 10_000;
@@ -21,14 +22,17 @@ function loadDraft(): DraftData | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    const data = JSON.parse(raw) as DraftData;
-    if (!data.essay || !data.question || !data.endTime) return null;
-    if (Date.now() - data.endTime > 24 * 60 * 60 * 1000) {
+    const parsed = JSON.parse(raw) as DraftData;
+    const question = normalizeGeneratedQuestion(parsed.question);
+    const endTime = typeof parsed.endTime === "number" ? parsed.endTime : question.auth.expiresAt;
+    if (typeof parsed.essay !== "string") return null;
+    if (Date.now() - endTime > 24 * 60 * 60 * 1000) {
       localStorage.removeItem(STORAGE_KEY);
       return null;
     }
-    return data;
+    return { essay: parsed.essay, question, endTime };
   } catch {
+    clearDraft();
     return null;
   }
 }
@@ -110,6 +114,7 @@ export default function PracticePage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [confirmingGiveUp, setConfirmingGiveUp] = useState(false);
   const [gradingMsgIndex, setGradingMsgIndex] = useState(0);
+  const [lockedEssay, setLockedEssay] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const endTimeRef = useRef<number>(0);
   const autoSubmittedRef = useRef(false);
@@ -139,6 +144,7 @@ export default function PracticePage() {
   const startTimer = useCallback((endTime?: number) => {
     if (timerRef.current) clearInterval(timerRef.current);
     endTimeRef.current = endTime ?? Date.now() + DURATION_SECONDS * 1000;
+    setTimeLeft(Math.max(0, Math.round((endTimeRef.current - Date.now()) / 1000)));
     timerRef.current = setInterval(() => {
       const remaining = Math.max(0, Math.round((endTimeRef.current - Date.now()) / 1000));
       setTimeLeft(remaining);
@@ -189,15 +195,19 @@ export default function PracticePage() {
     if (!draft) return;
     setQuestion(draft.question);
     setEssay(draft.essay);
+    setLockedEssay(null);
     const remaining = Math.max(0, Math.round((draft.endTime - Date.now()) / 1000));
     setTimeLeft(remaining);
     setStep("writing");
     setHasDraft(false);
+    endTimeRef.current = draft.endTime;
     if (remaining > 0) {
       autoSubmittedRef.current = false;
       startTimer(draft.endTime);
     } else {
-      autoSubmittedRef.current = true;
+      autoSubmittedRef.current = false;
+      setLockedEssay(draft.essay);
+      setErrorMessage("시간이 종료된 답안입니다. 추가 작성 없이 제출만 재시도할 수 있습니다.");
     }
   };
 
@@ -215,14 +225,20 @@ export default function PracticePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ difficulty }),
       });
-      if (!res.ok) throw new Error("문제 생성 요청 실패");
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      if (!res.ok) {
+        const error = await res.json().catch(() => null);
+        throw new Error(typeof error?.error === "string" ? error.error : "문제 생성 요청 실패");
+      }
+      const data = normalizeGeneratedQuestion(await res.json());
       setQuestion(data);
+      setEssay("");
+      setResult(null);
+      setSubmittedEssay("");
       setStep("writing");
-      setTimeLeft(DURATION_SECONDS);
+      setConfirmingGiveUp(false);
+      setLockedEssay(null);
       autoSubmittedRef.current = false;
-      startTimer();
+      startTimer(data.auth.expiresAt);
     } catch (e) {
       setErrorMessage(e instanceof Error ? e.message : "문제 생성에 실패했습니다.");
     } finally {
@@ -242,12 +258,15 @@ export default function PracticePage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ essay: essayText, question: q }),
         });
-        if (!res.ok) throw new Error("채점 요청 실패");
+        if (!res.ok) {
+          const error = await res.json().catch(() => null);
+          throw new Error(typeof error?.error === "string" ? error.error : "채점 요청 실패");
+        }
         const data = await res.json();
-        if (data.error) throw new Error(data.error);
         clearDraft();
         setResult(data);
         setSubmittedEssay(essayText);
+        setLockedEssay(null);
         saveHistory({
           id: q.id,
           date: new Date().toISOString(),
@@ -262,8 +281,11 @@ export default function PracticePage() {
       } catch (e) {
         setErrorMessage(e instanceof Error ? e.message : "채점에 실패했습니다.");
         setStep("writing");
-        if (!isAutoSubmit) {
+        if (Date.now() < endTimeRef.current && !isAutoSubmit) {
           startTimer(endTimeRef.current);
+        } else {
+          setTimeLeft(0);
+          setLockedEssay(essayText);
         }
       } finally {
         setLoading(false);
@@ -274,11 +296,12 @@ export default function PracticePage() {
 
   const handleSubmit = () => {
     if (!question || loading) return;
-    if (essay.length < 100) {
+    const essayToSubmit = lockedEssay ?? essay;
+    if (essayToSubmit.trim().length < 100) {
       setErrorMessage("최소 100자 이상 작성해주세요.");
       return;
     }
-    submitForGrading(essay, question);
+    submitForGrading(essayToSubmit, question, timeLeft <= 0);
   };
 
   // 타이머 만료 시 자동 제출 (ref 기반으로 stale closure 방지)
@@ -287,10 +310,11 @@ export default function PracticePage() {
     autoSubmittedRef.current = true;
     const currentEssay = essayRef.current;
     const currentQuestion = questionRef.current;
-    if (currentQuestion && currentEssay.length >= 100) {
+    setLockedEssay(currentEssay);
+    if (currentQuestion && currentEssay.trim().length >= 100) {
       submitForGrading(currentEssay, currentQuestion, true);
     } else {
-      setErrorMessage("시간이 종료되었습니다. 제출 및 채점 버튼을 눌러 수동 제출해 주세요.");
+      setErrorMessage("시간이 종료되었습니다. 추가 작성은 잠겼습니다.");
     }
   }, [timeLeft, step, submitForGrading]);
 
@@ -394,6 +418,7 @@ export default function PracticePage() {
   }
 
   if (step === "writing" && question) {
+    const isLocked = loading || lockedEssay !== null || timeLeft <= 0;
     const charLabel = essay.length < 1000 ? "부족" : essay.length > 1800 ? "초과" : "적정";
     const charColor = essay.length < 1000 ? "text-stone-400" : essay.length > 1800 ? "text-amber-600" : "text-emerald-600";
     return (
@@ -425,6 +450,12 @@ export default function PracticePage() {
           </div>
         )}
 
+        {lockedEssay !== null && (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-3 text-sm text-amber-800">
+            시간이 종료되어 답안 수정이 잠겼습니다. 현재 내용으로 제출만 재시도할 수 있습니다.
+          </div>
+        )}
+
         <div className="flex justify-end" data-print-hide>
           <button
             onClick={() => window.print()}
@@ -444,6 +475,7 @@ export default function PracticePage() {
           value={essay}
           onChange={(e) => setEssay(e.target.value)}
           placeholder="여기에 논술을 작성하세요..."
+          disabled={isLocked}
           className="min-h-[60vh] w-full rounded-xl border border-stone-200 bg-white p-6 text-sm leading-relaxed focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
         />
 
@@ -458,6 +490,7 @@ export default function PracticePage() {
                   setStep("setup");
                   setEssay("");
                   setQuestion(null);
+                  setLockedEssay(null);
                   setConfirmingGiveUp(false);
                 }}
                 className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
@@ -605,6 +638,7 @@ export default function PracticePage() {
               setResult(null);
               setSubmittedEssay("");
               setTimeLeft(DURATION_SECONDS);
+              setLockedEssay(null);
             }}
             className="rounded-lg bg-emerald-600 px-8 py-4 font-medium text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
           >

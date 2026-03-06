@@ -88,14 +88,15 @@ export default function ExamsPage() {
       // 해설 데이터가 캐시에 있으면 바로 설정, 없으면 fetch
       if (cacheRef.current[year]) {
         setCommentary(cacheRef.current[year]);
+        setCommentaryLoading(false);
       } else {
         setCommentary(null);
         fetchCommentary(year);
       }
     } else {
       setCommentary(cacheRef.current[year] ?? null);
+      setCommentaryLoading(false);
     }
-    setCommentaryLoading(false);
   }
 
   // 연도 선택 시 스크롤
