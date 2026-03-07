@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import VisitorCounter from "./components/VisitorCounter";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="min-h-screen bg-stone-50 text-stone-900 antialiased">
+        <VisitorCounter />
         <header className="bg-emerald-700 shadow-md">
           <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
             <Link href="/" className="text-lg font-bold text-white">
