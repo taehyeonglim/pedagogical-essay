@@ -2,26 +2,57 @@
 
 import { useEffect, useState } from "react";
 
+function getSessionFlag(key: string): string | null {
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function setSessionFlag(key: string, value: string) {
+  try {
+    sessionStorage.setItem(key, value);
+  } catch {
+    // Safari private mode and locked-down browsers can throw here.
+  }
+}
+
 export default function VisitorCounter() {
   const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
-    const counted = sessionStorage.getItem("visitor_counted");
+    let cancelled = false;
+    const counted = getSessionFlag("visitor_counted");
+
+    const loadCount = async () => {
+      const res = await fetch("/api/visitors", { cache: "no-store" });
+      if (!res.ok) throw new Error("count fetch failed");
+      const data = await res.json();
+      if (!cancelled) setCount(data.count);
+    };
+
+    const incrementCount = async () => {
+      const res = await fetch("/api/visitors", { method: "POST", cache: "no-store" });
+      if (!res.ok) throw new Error("count increment failed");
+      const data = await res.json();
+      if (!cancelled) {
+        setCount(data.count);
+        setSessionFlag("visitor_counted", "1");
+      }
+    };
 
     if (counted) {
-      fetch("/api/visitors")
-        .then((res) => res.json())
-        .then((data) => setCount(data.count))
-        .catch(() => {});
+      void loadCount().catch(() => {});
     } else {
-      fetch("/api/visitors", { method: "POST" })
-        .then((res) => res.json())
-        .then((data) => {
-          setCount(data.count);
-          sessionStorage.setItem("visitor_counted", "1");
-        })
-        .catch(() => {});
+      void incrementCount().catch(() => {
+        void loadCount().catch(() => {});
+      });
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (count === null) return null;
