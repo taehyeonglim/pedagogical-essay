@@ -15,7 +15,7 @@
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
-    "@google/genai": "^1.0.0",
+    "@google/genai": "^1.45.0",
     "@upstash/redis": "^1.36.3",
     "next": "^15.1.0",
     "react": "^19.0.0",
