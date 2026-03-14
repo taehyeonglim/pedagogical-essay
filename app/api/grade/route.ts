@@ -5,6 +5,8 @@ import { verifySignedQuestion } from "@/lib/question-auth";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import type { GeneratedQuestion } from "@/lib/types";
 
+export const runtime = "nodejs";
+
 const MAX_ESSAY_LENGTH = 10_000;
 const MIN_ESSAY_LENGTH = 100;
 

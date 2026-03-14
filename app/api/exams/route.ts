@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getAllExamSummaries, getExam, getCommentary } from "@/lib/knowledge-base";
 
+export const runtime = "nodejs";
+
 const MIN_YEAR = 2015;
 const MAX_YEAR = 2030;
 

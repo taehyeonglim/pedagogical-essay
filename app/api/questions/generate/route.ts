@@ -3,6 +3,8 @@ import { generateQuestion } from "@/lib/question-generator";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import type { QuestionDifficulty } from "@/lib/types";
 
+export const runtime = "nodejs";
+
 const VALID_DIFFICULTIES = new Set<QuestionDifficulty>(["basic", "standard", "advanced"]);
 
 export async function POST(request: Request) {

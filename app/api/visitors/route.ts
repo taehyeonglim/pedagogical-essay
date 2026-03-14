@@ -1,6 +1,8 @@
 import { Redis } from "@upstash/redis";
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+
 function getRedis() {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
