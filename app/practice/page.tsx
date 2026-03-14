@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { QUESTION_DURATION_MS, normalizeGeneratedQuestion } from "@/lib/generated-question";
-import type { GeneratedQuestion, GradeResult } from "@/lib/types";
+import type { GeneratedQuestion, GradeResult, ScoreItem } from "@/lib/types";
 import ExamPaperView from "@/components/ExamPaperView";
 
 const DURATION_SECONDS = QUESTION_DURATION_MS / 1000;
@@ -51,6 +51,70 @@ function clearDraft() {
   try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function normalizeScoreItem(
+  value: unknown,
+  expectedMaxScore: number,
+  fallbackFeedback: string
+): ScoreItem {
+  const item = isRecord(value) ? value : {};
+  const score = typeof item.score === "number" && Number.isFinite(item.score)
+    ? Math.max(0, Math.min(expectedMaxScore, Math.trunc(item.score)))
+    : 0;
+  const feedback = typeof item.feedback === "string" && item.feedback.trim()
+    ? item.feedback.trim().slice(0, 1_500)
+    : fallbackFeedback;
+
+  return {
+    score,
+    maxScore: expectedMaxScore,
+    feedback,
+  };
+}
+
+function normalizeClientGradeResult(value: unknown): GradeResult {
+  const result = isRecord(value) ? value : {};
+  const breakdown = isRecord(result.breakdown) ? result.breakdown : {};
+  const content = normalizeScoreItem(breakdown.content, 15, "내용 피드백을 불러오지 못했습니다.");
+  const logic = normalizeScoreItem(breakdown.logic, 3, "논리 피드백을 불러오지 못했습니다.");
+  const expression = normalizeScoreItem(breakdown.expression, 2, "표현 피드백을 불러오지 못했습니다.");
+
+  const spellingIssues = Array.isArray(result.spellingIssues)
+    ? result.spellingIssues
+        .filter(isRecord)
+        .slice(0, 20)
+        .map((item) => ({
+          original: typeof item.original === "string" ? item.original.trim().slice(0, 200) : "",
+          suggestion: typeof item.suggestion === "string" ? item.suggestion.trim().slice(0, 200) : "",
+          context: typeof item.context === "string" ? item.context.trim().slice(0, 500) : "",
+        }))
+        .filter((item) => item.original || item.suggestion || item.context)
+    : [];
+
+  const normalizeTextList = (input: unknown, fallback: string[]) =>
+    Array.isArray(input)
+      ? input
+          .filter((item): item is string => typeof item === "string")
+          .map((item) => item.trim())
+          .filter(Boolean)
+          .slice(0, 10)
+      : fallback;
+
+  const strengths = normalizeTextList(result.strengths, ["채점 결과를 참고하세요."]);
+  const improvements = normalizeTextList(result.improvements, ["채점 결과를 참고하세요."]);
+
+  return {
+    overallScore: content.score + logic.score + expression.score,
+    breakdown: { content, logic, expression },
+    spellingIssues,
+    strengths: strengths.length > 0 ? strengths : ["채점 결과를 참고하세요."],
+    improvements: improvements.length > 0 ? improvements : ["채점 결과를 참고하세요."],
+  };
+}
+
 interface HistoryEntry {
   id: string;
   date: string;
@@ -62,10 +126,39 @@ interface HistoryEntry {
   result: GradeResult;
 }
 
+function normalizeHistoryEntry(value: unknown): HistoryEntry | null {
+  if (!isRecord(value) || typeof value.essay !== "string") return null;
+
+  try {
+    const question = normalizeGeneratedQuestion(value.question);
+    const result = normalizeClientGradeResult(value.result);
+    const date =
+      typeof value.date === "string" && !Number.isNaN(Date.parse(value.date))
+        ? value.date
+        : new Date().toISOString();
+
+    return {
+      id: typeof value.id === "string" && value.id ? value.id : question.id,
+      date,
+      difficulty: typeof value.difficulty === "string" ? value.difficulty : question.difficulty,
+      domain: typeof value.domain === "string" ? value.domain : question.targetDomain ?? "",
+      score: result.overallScore,
+      essay: value.essay,
+      question,
+      result,
+    };
+  } catch {
+    return null;
+  }
+}
+
 function saveHistory(entry: HistoryEntry) {
   try {
     const raw = localStorage.getItem(HISTORY_KEY);
-    const list: HistoryEntry[] = raw ? JSON.parse(raw) : [];
+    const parsed = raw ? JSON.parse(raw) : [];
+    const list = Array.isArray(parsed)
+      ? parsed.map(normalizeHistoryEntry).filter((item): item is HistoryEntry => item !== null)
+      : [];
     list.unshift(entry);
     if (list.length > MAX_HISTORY) list.length = MAX_HISTORY;
     localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
@@ -79,7 +172,9 @@ function saveHistory(entry: HistoryEntry) {
 function loadHistory(): HistoryEntry[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const parsed = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(normalizeHistoryEntry).filter((item): item is HistoryEntry => item !== null);
   } catch {
     return [];
   }
@@ -160,14 +255,6 @@ export default function PracticePage() {
     };
   }, []);
 
-  // beforeunload 보호
-  useEffect(() => {
-    if (step !== "writing" || !essay) return;
-    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
-    window.addEventListener("beforeunload", handler);
-    return () => window.removeEventListener("beforeunload", handler);
-  }, [step, essay]);
-
   // 자동 저장 (ref 기반)
   const essayRef = useRef(essay);
   const questionRef = useRef(question);
@@ -182,6 +269,43 @@ export default function PracticePage() {
       }
     }, AUTOSAVE_INTERVAL);
     return () => clearInterval(id);
+  }, [step]);
+
+  useEffect(() => {
+    if (step !== "writing" || !questionRef.current) return;
+
+    const persistDraft = () => {
+      if (questionRef.current) {
+        saveDraft(essayRef.current, questionRef.current, endTimeRef.current);
+      }
+    };
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!essayRef.current.trim()) return;
+      persistDraft();
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    const handlePageHide = () => {
+      persistDraft();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        persistDraft();
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("pagehide", handlePageHide);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("pagehide", handlePageHide);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [step]);
 
   const formatTime = (seconds: number) => {
@@ -262,7 +386,7 @@ export default function PracticePage() {
           const error = await res.json().catch(() => null);
           throw new Error(typeof error?.error === "string" ? error.error : "채점 요청 실패");
         }
-        const data = await res.json();
+        const data = normalizeClientGradeResult(await res.json());
         clearDraft();
         setResult(data);
         setSubmittedEssay(essayText);

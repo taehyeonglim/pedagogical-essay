@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { generateQuestion } from "@/lib/question-generator";
-import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { checkRateLimit } from "@/lib/rate-limit";
 import type { QuestionDifficulty } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 const VALID_DIFFICULTIES = new Set<QuestionDifficulty>(["basic", "standard", "advanced"]);
 
 export async function POST(request: Request) {
-  const { ok } = checkRateLimit(getClientIP(request));
+  const { ok } = await checkRateLimit(request, { scope: "questions:generate" });
   if (!ok) {
     return NextResponse.json({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요." }, { status: 429 });
   }

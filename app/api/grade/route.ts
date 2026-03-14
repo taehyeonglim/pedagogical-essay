@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { gradeEssay } from "@/lib/grader";
 import { normalizeGeneratedQuestion } from "@/lib/generated-question";
 import { verifySignedQuestion } from "@/lib/question-auth";
-import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { checkRateLimit } from "@/lib/rate-limit";
 import type { GeneratedQuestion } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -11,7 +11,7 @@ const MAX_ESSAY_LENGTH = 10_000;
 const MIN_ESSAY_LENGTH = 100;
 
 export async function POST(request: Request) {
-  const { ok } = checkRateLimit(getClientIP(request));
+  const { ok } = await checkRateLimit(request, { scope: "essay:grade" });
   if (!ok) {
     return NextResponse.json({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요." }, { status: 429 });
   }

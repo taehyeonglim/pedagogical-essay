@@ -14,9 +14,9 @@ type SignedQuestionInput = Omit<GeneratedQuestion, "auth"> & {
 };
 
 function getSigningKey(): string {
-  const key = process.env.QUESTION_SIGNING_SECRET ?? process.env.GEMINI_API_KEY;
+  const key = process.env.QUESTION_SIGNING_SECRET;
   if (!key) {
-    throw new Error("QUESTION_SIGNING_SECRET 또는 GEMINI_API_KEY 환경변수가 필요합니다");
+    throw new Error("QUESTION_SIGNING_SECRET 환경변수가 필요합니다");
   }
   return key;
 }

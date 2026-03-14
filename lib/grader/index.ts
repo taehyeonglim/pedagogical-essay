@@ -1,6 +1,6 @@
 import { generateJSON } from "@/lib/ai/gemini";
 import { getAnalysis } from "@/lib/knowledge-base";
-import type { GradeResult, GeneratedQuestion } from "@/lib/types";
+import type { GradeResult, GeneratedQuestion, ScoreItem } from "@/lib/types";
 
 function lookupTheoryDescriptions(
   theoryNames: string[]
@@ -80,19 +80,109 @@ ${essay}
 }`;
 }
 
-function isValidGradeResult(r: unknown): r is GradeResult {
-  if (!r || typeof r !== "object") return false;
-  const obj = r as Record<string, unknown>;
-  if (typeof obj.overallScore !== "number") return false;
-  if (!obj.breakdown || typeof obj.breakdown !== "object") return false;
-  const bd = obj.breakdown as Record<string, unknown>;
-  for (const key of ["content", "logic", "expression"]) {
-    if (!bd[key] || typeof bd[key] !== "object") return false;
-    const item = bd[key] as Record<string, unknown>;
-    if (typeof item.score !== "number" || typeof item.maxScore !== "number") return false;
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function readInteger(
+  value: unknown,
+  fallback: number,
+  { min = 0, max = 20 }: { min?: number; max?: number } = {}
+): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
+  const normalized = Math.trunc(value);
+  return Math.min(max, Math.max(min, normalized));
+}
+
+function readString(
+  value: unknown,
+  fallback: string,
+  { maxLength = 1_000, trim = true }: { maxLength?: number; trim?: boolean } = {}
+): string {
+  if (typeof value !== "string") return fallback;
+  const normalized = trim ? value.trim() : value;
+  if (!normalized) return fallback;
+  return normalized.slice(0, maxLength);
+}
+
+function readStringArray(
+  value: unknown,
+  fallback: string[],
+  { maxItems = 10, maxItemLength = 400 }: { maxItems?: number; maxItemLength?: number } = {}
+): string[] {
+  if (!Array.isArray(value)) return fallback;
+
+  const normalized = value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, maxItems)
+    .map((item) => item.slice(0, maxItemLength));
+
+  return normalized.length > 0 ? normalized : fallback;
+}
+
+function normalizeScoreItem(
+  value: unknown,
+  expectedMaxScore: number,
+  fallbackFeedback: string
+): ScoreItem {
+  const item = isRecord(value) ? value : {};
+
+  return {
+    score: readInteger(item.score, 0, { min: 0, max: expectedMaxScore }),
+    maxScore: expectedMaxScore,
+    feedback: readString(item.feedback, fallbackFeedback, { maxLength: 1_500 }),
+  };
+}
+
+function normalizeSpellingIssues(value: unknown): GradeResult["spellingIssues"] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .filter(isRecord)
+    .slice(0, 20)
+    .map((item) => ({
+      original: readString(item.original, "", { maxLength: 200 }),
+      suggestion: readString(item.suggestion, "", { maxLength: 200 }),
+      context: readString(item.context, "", { maxLength: 500 }),
+    }))
+    .filter((item) => item.original || item.suggestion || item.context);
+}
+
+function normalizeGradeResult(value: unknown): GradeResult {
+  if (!isRecord(value)) {
+    throw new Error("AI 채점 응답 구조가 올바르지 않습니다");
   }
-  if (!Array.isArray(obj.strengths) || !Array.isArray(obj.improvements)) return false;
-  return true;
+
+  const breakdown = isRecord(value.breakdown) ? value.breakdown : {};
+  const content = normalizeScoreItem(
+    breakdown.content,
+    15,
+    "내용 채점 피드백을 생성하지 못했습니다."
+  );
+  const logic = normalizeScoreItem(
+    breakdown.logic,
+    3,
+    "논리 채점 피드백을 생성하지 못했습니다."
+  );
+  const expression = normalizeScoreItem(
+    breakdown.expression,
+    2,
+    "표현 채점 피드백을 생성하지 못했습니다."
+  );
+
+  return {
+    overallScore: content.score + logic.score + expression.score,
+    breakdown: {
+      content,
+      logic,
+      expression,
+    },
+    spellingIssues: normalizeSpellingIssues(value.spellingIssues),
+    strengths: readStringArray(value.strengths, ["채점 결과를 참고하세요."]),
+    improvements: readStringArray(value.improvements, ["채점 결과를 참고하세요."]),
+  };
 }
 
 export async function gradeEssay(
@@ -100,21 +190,6 @@ export async function gradeEssay(
   question: GeneratedQuestion
 ): Promise<GradeResult> {
   const prompt = buildGradePrompt(essay, question);
-  const raw = await generateJSON<GradeResult>(prompt);
-
-  if (!isValidGradeResult(raw)) {
-    throw new Error("AI 채점 응답 구조가 올바르지 않습니다");
-  }
-
-  const result = raw;
-  result.breakdown.content.score = Math.max(0, Math.min(result.breakdown.content.score, result.breakdown.content.maxScore));
-  result.breakdown.logic.score = Math.max(0, Math.min(result.breakdown.logic.score, result.breakdown.logic.maxScore));
-  result.breakdown.expression.score = Math.max(0, Math.min(result.breakdown.expression.score, result.breakdown.expression.maxScore));
-  result.overallScore = result.breakdown.content.score + result.breakdown.logic.score + result.breakdown.expression.score;
-
-  if (!Array.isArray(result.spellingIssues)) result.spellingIssues = [];
-  if (!Array.isArray(result.strengths) || result.strengths.length === 0) result.strengths = ["채점 결과를 참고하세요."];
-  if (!Array.isArray(result.improvements) || result.improvements.length === 0) result.improvements = ["채점 결과를 참고하세요."];
-
-  return result;
+  const raw = await generateJSON<unknown>(prompt);
+  return normalizeGradeResult(raw);
 }
