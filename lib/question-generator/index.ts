@@ -38,6 +38,9 @@ function selectDomain(
   }
 
   // standard 또는 fallback: 전 영역 랜덤
+  if (domains.length === 0) {
+    throw new Error("분석 데이터에 출제 영역이 없습니다");
+  }
   return domains[Math.floor(Math.random() * domains.length)];
 }
 
@@ -91,7 +94,7 @@ function buildPrompt(
   // 실제 기출문제 예시
   const sampleExam = findRecentExamForDomain(exams, analysis, domain.id);
   const sampleExamText = sampleExam
-    ? `[${sampleExam.year}학년도]\n${sampleExam.rawMd}`
+    ? `[${sampleExam.year}학년도]\n${sampleExam.rawMd.slice(0, 3_000)}`
     : "(해당 영역 기출 없음)";
 
   return `당신은 초등학교 임용시험 교직논술 출제 전문가입니다.

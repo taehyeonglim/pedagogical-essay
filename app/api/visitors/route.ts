@@ -40,8 +40,12 @@ export async function GET() {
   const redis = getRedis();
   if (!redis) return buildCountResponse(0);
 
-  const count = (await redis.get<number>(VISITOR_KEY)) ?? 0;
-  return buildCountResponse(count);
+  try {
+    const count = (await redis.get<number>(VISITOR_KEY)) ?? 0;
+    return buildCountResponse(count);
+  } catch {
+    return buildCountResponse(0);
+  }
 }
 
 export async function POST(request: Request) {
@@ -60,22 +64,26 @@ export async function POST(request: Request) {
   const redis = getRedis();
   if (!redis) return buildCountResponse(0);
 
-  if (hasVisitorCookie(request)) {
-    const count = (await redis.get<number>(VISITOR_KEY)) ?? 0;
-    return buildCountResponse(count);
+  try {
+    if (hasVisitorCookie(request)) {
+      const count = (await redis.get<number>(VISITOR_KEY)) ?? 0;
+      return buildCountResponse(count);
+    }
+
+    const count = await redis.incr(VISITOR_KEY);
+    const response = buildCountResponse(count);
+    response.cookies.set({
+      name: VISITOR_COOKIE,
+      value: "1",
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: VISITOR_COOKIE_MAX_AGE,
+    });
+
+    return response;
+  } catch {
+    return buildCountResponse(0);
   }
-
-  const count = await redis.incr(VISITOR_KEY);
-  const response = buildCountResponse(count);
-  response.cookies.set({
-    name: VISITOR_COOKIE,
-    value: "1",
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: VISITOR_COOKIE_MAX_AGE,
-  });
-
-  return response;
 }

@@ -232,14 +232,25 @@ export function normalizeGeneratedQuestionPayload(
   };
 }
 
+function readTimestamp(value: unknown, field: string): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    throw new Error(`${field} must be a finite number`);
+  }
+  const truncated = Math.trunc(value);
+  if (truncated < 1 || truncated > 9_999_999_999_999) {
+    throw new Error(`${field} is out of valid range`);
+  }
+  return truncated;
+}
+
 function normalizeQuestionAuth(value: unknown): GeneratedQuestionAuth {
   if (!isRecord(value)) {
     throw new Error("question auth metadata is required");
   }
 
   return {
-    issuedAt: readInteger(value.issuedAt, 0, { min: 1, max: 9_999_999_999_999 }),
-    expiresAt: readInteger(value.expiresAt, 0, { min: 1, max: 9_999_999_999_999 }),
+    issuedAt: readTimestamp(value.issuedAt, "auth.issuedAt"),
+    expiresAt: readTimestamp(value.expiresAt, "auth.expiresAt"),
     signature: readString(value.signature, "auth.signature", { minLength: 32, maxLength: 256, trim: false }),
   };
 }

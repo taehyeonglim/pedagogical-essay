@@ -35,11 +35,19 @@ function normalizeIPAddress(value: string): string | null {
   if (!trimmed) return null;
 
   const withoutQuotes = trimmed.replace(/^"|"$/g, "");
-  const withoutBrackets = withoutQuotes.replace(/^\[|\]$/g, "");
+
+  // [addr]:port 형태를 먼저 분리 (IPv6 bracket notation)
+  const bracketMatch = withoutQuotes.match(/^\[([^\]]+)\](?::\d+)?$/);
+  const withoutBrackets = bracketMatch ? bracketMatch[1] : withoutQuotes;
+
   const withoutMappedPrefix = withoutBrackets.replace(/^::ffff:/, "");
-  const withoutPort = withoutMappedPrefix.includes(":") && withoutMappedPrefix.includes(".")
-    ? withoutMappedPrefix.replace(/:\d+$/, "")
-    : withoutMappedPrefix;
+
+  // IPv4:port 형태에서 포트 제거 (IPv4 주소에만 적용)
+  const withoutPort = withoutMappedPrefix.includes(".") && !withoutMappedPrefix.includes(":")
+    ? withoutMappedPrefix
+    : withoutMappedPrefix.includes(".") && withoutMappedPrefix.includes(":")
+      ? withoutMappedPrefix.replace(/:\d+$/, "")
+      : withoutMappedPrefix;
 
   return isIP(withoutPort) ? withoutPort : null;
 }
@@ -78,7 +86,7 @@ function getClientKey(request: Request): string {
   return `anon:${hashValue(`${userAgent}:${language}`)}`;
 }
 
-function scheduleCleanup(windowMs: number) {
+function scheduleCleanup() {
   if (_cleanupScheduled) return;
   _cleanupScheduled = true;
   if (typeof setInterval !== "undefined") {
@@ -87,21 +95,22 @@ function scheduleCleanup(windowMs: number) {
       for (const [key, entry] of requests) {
         if (now > entry.resetTime) requests.delete(key);
       }
-    }, windowMs);
+    }, 60_000);
     timer.unref?.();
   }
 }
 
 function checkMemoryRateLimit(key: string, windowMs: number, maxRequests: number): { ok: boolean; remaining: number } {
-  scheduleCleanup(windowMs);
+  scheduleCleanup();
   const now = Date.now();
   const entry = requests.get(key);
 
   if (!entry || now > entry.resetTime) {
+    for (const [storedKey, storedValue] of requests) {
+      if (now > storedValue.resetTime) requests.delete(storedKey);
+    }
     if (requests.size >= MAX_ENTRIES) {
-      for (const [storedKey, storedValue] of requests) {
-        if (now > storedValue.resetTime) requests.delete(storedKey);
-      }
+      return { ok: false, remaining: 0 };
     }
     requests.set(key, { count: 1, resetTime: now + windowMs });
     return { ok: true, remaining: maxRequests - 1 };
@@ -123,10 +132,11 @@ async function checkRedisRateLimit(key: string, windowMs: number, maxRequests: n
   const ttlSeconds = Math.ceil(windowMs / 1000);
 
   try {
-    const count = await redis.incr(redisKey);
-    if (count === 1) {
-      await redis.expire(redisKey, ttlSeconds);
-    }
+    const pipeline = redis.pipeline();
+    pipeline.incr(redisKey);
+    pipeline.expire(redisKey, ttlSeconds);
+    const results = await pipeline.exec();
+    const count = results[0] as number;
 
     return {
       ok: count <= maxRequests,

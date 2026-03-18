@@ -72,8 +72,8 @@ export function verifySignedQuestion(question: GeneratedQuestion): { ok: true } 
     auth: { issuedAt, expiresAt },
   });
 
-  const actualBytes = Buffer.from(signature, "utf8");
-  const expectedBytes = Buffer.from(expected, "utf8");
+  const actualBytes = Buffer.from(signature, "hex");
+  const expectedBytes = Buffer.from(expected, "hex");
   if (actualBytes.length !== expectedBytes.length || !timingSafeEqual(actualBytes, expectedBytes)) {
     return { ok: false, reason: "invalid" };
   }

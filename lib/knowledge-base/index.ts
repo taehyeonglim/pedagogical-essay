@@ -111,16 +111,26 @@ export function getAllExamSummaries(): { year: number; topic: string }[] {
 
 export function getExamPatterns(): ExamPatterns {
   if (_patternsCache) return _patternsCache;
-  const raw = readFileSync(PATTERNS_FILE, "utf-8");
-  _patternsCache = JSON.parse(raw) as ExamPatterns;
-  return _patternsCache;
+  try {
+    const raw = readFileSync(PATTERNS_FILE, "utf-8");
+    _patternsCache = JSON.parse(raw) as ExamPatterns;
+    return _patternsCache;
+  } catch (e) {
+    console.error("[knowledge-base] getExamPatterns() 실패:", e instanceof Error ? e.message : e);
+    throw new Error("출제 패턴 데이터를 불러올 수 없습니다");
+  }
 }
 
 export function getAnalysis(): AnalysisData {
   if (_analysisCache) return _analysisCache;
-  const raw = readFileSync(ANALYSIS_FILE, "utf-8");
-  _analysisCache = JSON.parse(raw) as AnalysisData;
-  return _analysisCache;
+  try {
+    const raw = readFileSync(ANALYSIS_FILE, "utf-8");
+    _analysisCache = JSON.parse(raw) as AnalysisData;
+    return _analysisCache;
+  } catch (e) {
+    console.error("[knowledge-base] getAnalysis() 실패:", e instanceof Error ? e.message : e);
+    throw new Error("분석 데이터를 불러올 수 없습니다");
+  }
 }
 
 export function getCommentary(year: number): ExamCommentary | null {

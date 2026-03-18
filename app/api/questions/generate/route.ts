@@ -20,6 +20,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "요청 형식이 잘못되었습니다" }, { status: 400 });
   }
 
+  if (typeof body !== "object" || body === null) {
+    return NextResponse.json({ error: "요청 본문은 객체여야 합니다" }, { status: 400 });
+  }
   const { difficulty } = body as { difficulty?: string };
   const requestedDifficulty = difficulty as QuestionDifficulty | undefined;
   if (requestedDifficulty && !VALID_DIFFICULTIES.has(requestedDifficulty)) {

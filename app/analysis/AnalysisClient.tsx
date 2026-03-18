@@ -45,7 +45,7 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
         <h2 className="mb-6 text-xl font-bold text-stone-800">영역별 출제 빈도</h2>
         <div className="flex flex-col gap-3">
           {domainCounts.map((d) => {
-            const colors = DOMAIN_COLORS[d.color];
+            const colors = DOMAIN_COLORS[d.color] ?? DOMAIN_COLORS.emerald;
             const pct = maxCount > 0 ? (d.count / maxCount) * 100 : 0;
             return (
               <button
@@ -107,7 +107,7 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
             </thead>
             <tbody>
               {domains.map((domain) => {
-                const colors = DOMAIN_COLORS[domain.color];
+                const colors = DOMAIN_COLORS[domain.color] ?? DOMAIN_COLORS.emerald;
                 return (
                   <tr key={domain.id} className="border-b border-stone-100 last:border-0">
                     <td className={`sticky left-0 z-10 bg-white px-4 py-3 font-medium ${colors.text}`}>
@@ -163,7 +163,7 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
           {yearlyAnalysis.map((item) => {
             const isOpen = expandedYear === item.year;
             const domain = domains.find((d) => d.id === item.domainId);
-            const colors = domain ? DOMAIN_COLORS[domain.color] : DOMAIN_COLORS.emerald;
+            const colors = (domain ? DOMAIN_COLORS[domain.color] : undefined) ?? DOMAIN_COLORS.emerald;
             const panelId = `year-panel-${item.year}`;
             return (
               <div
@@ -237,7 +237,7 @@ export default function AnalysisClient({ data }: { data: AnalysisData }) {
         <h2 className="mb-6 text-xl font-bold text-stone-800">주요 교육학 이론 해설</h2>
         <div className="flex flex-col gap-4">
           {domains.map((domain) => {
-            const colors = DOMAIN_COLORS[domain.color];
+            const colors = DOMAIN_COLORS[domain.color] ?? DOMAIN_COLORS.emerald;
             const isOpen = expandedDomain === domain.id;
             const panelId = `domain-panel-${domain.id}`;
             return (

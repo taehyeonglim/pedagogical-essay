@@ -24,8 +24,8 @@
   "scoringSystem": {
     "totalScore": 20,
     "breakdown": {
-      "content": { "score": 15, "label": "논술의 내용" },
-      "structure": { "score": 5, "label": "논술의 체계/체제" }
+      "content": { "score": 15, "label": "논술의 내용", "note": "2017학년도~ 기준. 2015~2016학년도는 10점" },
+      "structure": { "score": 5, "label": "논술의 체계/체제", "note": "2017학년도~ 기준. 2015~2016학년도는 10점" }
     },
     "structureDetail": {
       "logicalCoherence": { "score": 3, "label": "글의 논리적 체계성" },
