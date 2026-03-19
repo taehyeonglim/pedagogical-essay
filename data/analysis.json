@@ -77,6 +77,22 @@
           ]
         },
         {
+          "name": "Tyler 교육과정 설계 모형",
+          "years": [2026],
+          "description": "Tyler는 교육목표 설정 → 학습경험 선정 → 학습경험 조직 → 평가의 4단계 교육과정 설계 모형을 제시하였다. 목표 중심의 합리적·체계적 교육과정 개발의 고전적 틀이다.",
+          "references": [
+            { "title": "Wikipedia: Ralph W. Tyler", "url": "https://en.wikipedia.org/wiki/Ralph_W._Tyler" }
+          ]
+        },
+        {
+          "name": "백워드 설계 (Wiggins & McTighe)",
+          "years": [2026],
+          "description": "Wiggins와 McTighe의 Understanding by Design으로, 바라는 결과 확인 → 수용 가능한 증거 결정 → 학습 경험 계획의 역순으로 교육과정을 설계한다.",
+          "references": [
+            { "title": "Wikipedia: Backward design", "url": "https://en.wikipedia.org/wiki/Backward_design" }
+          ]
+        },
+        {
           "name": "나선형 교육과정 (Bruner)",
           "years": [2026],
           "description": "동일한 핵심 개념과 원리를 학년이 올라갈수록 더 깊고 넓게 반복하여 다루는 교육과정 조직 원리이다. 선수 학습과 후속 학습을 연결하여 이해의 심화를 돕는다.",
@@ -130,12 +146,19 @@
           ]
         },
         {
-          "name": "협동학습 (Jigsaw, STAD)",
+          "name": "직소(Jigsaw) 모형 (Aronson)",
           "years": [2017],
-          "description": "소집단 내 긍정적 상호의존성을 기반으로 한 학습 방법이다. STAD(모둠성취분담)는 팀 보상 구조로 개인 책무성을 강화하고, Jigsaw(직소)는 전문가 집단 활동 후 원래 집단에서 상호 교수하는 구조이다.",
+          "description": "Aronson이 개발한 협동학습 모형으로, 학생이 전문가 집단에서 맡은 부분을 학습한 뒤 원래 모둠에 돌아가 상호 교수하는 구조이다. 과제의 분담 자체가 긍정적 상호의존성을 만들어 낸다.",
           "references": [
-            { "title": "Wikipedia: Cooperative learning", "url": "https://en.wikipedia.org/wiki/Cooperative_learning" },
-            { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" }
+            { "title": "Wikipedia: Jigsaw (teaching technique)", "url": "https://en.wikipedia.org/wiki/Jigsaw_(teaching_technique)" }
+          ]
+        },
+        {
+          "name": "STAD 모형 (Slavin)",
+          "years": [2017],
+          "description": "Slavin이 개발한 모둠성취분담 모형으로, 개별 퀴즈 점수의 향상분을 모둠 점수에 반영하는 보상 구조를 통해 개인 책무성과 긍정적 상호의존성을 동시에 확보한다.",
+          "references": [
+            { "title": "Wikipedia: Student Teams – Achievement Divisions", "url": "https://en.wikipedia.org/wiki/Student_Teams_%E2%80%93_Achievement_Divisions" }
           ]
         },
         {
@@ -148,9 +171,9 @@
           ]
         },
         {
-          "name": "Vygotsky 근접발달영역(ZPD)·스캐폴딩",
+          "name": "Vygotsky 근접발달영역(ZPD)",
           "years": [2021],
-          "description": "학습자의 현재 발달 수준과 잠재적 발달 수준 사이의 근접발달영역에서 적절한 도움을 제공해야 학습이 촉진된다는 이론이다. 학습부진 학생에게 수준별 과제, 힌트, 보충지도를 제공하는 스캐폴딩의 근거가 된다.",
+          "description": "학습자의 현재 발달 수준과 잠재적 발달 수준 사이의 근접발달영역에서 교사나 유능한 또래의 도움을 받아 학습이 촉진된다는 이론이다. 스캐폴딩(Wood, Bruner, Ross)은 이 영역에서의 구체적 지원 전략을 가리킨다.",
           "references": [
             { "title": "Wikipedia: Zone of proximal development", "url": "https://en.wikipedia.org/wiki/Zone_of_proximal_development" },
             { "title": "에듀넷: 구성주의와 수업", "url": "https://www.edunet.net" }
@@ -184,7 +207,7 @@
         {
           "name": "평가의 타당도",
           "years": [2026],
-          "description": "평가 도구가 측정하고자 하는 것을 얼마나 정확하게 측정하는가의 정도이다. 내용 타당도(교육과정 내용 반영), 구인 타당도(구성개념 측정), 준거 타당도(외적 준거와의 상관) 등으로 구분된다.",
+          "description": "평가 도구가 측정하고자 하는 것을 얼마나 정확하게 측정하는가의 정도이다. 내용 타당도(교육과정 내용 반영), 구인 타당도(구성개념 측정), 준거 타당도(외적 준거와의 상관) 등으로 구분된다. 이원목적분류표(table of specifications)는 교육 내용과 행동 목표를 교차하여 내용 타당도를 체계적으로 확보하는 도구이다.",
           "references": [
             { "title": "Wikipedia: Validity (education)", "url": "https://en.wikipedia.org/wiki/Validity_(education)" },
             { "title": "에듀넷: 교육평가의 기초", "url": "https://www.edunet.net" }
@@ -214,7 +237,7 @@
       "id": "guidance",
       "name": "생활지도·상담",
       "color": "rose",
-      "years": [2015, 2018, 2019, 2023],
+      "years": [2015, 2018, 2019, 2021, 2023],
       "theories": [
         {
           "name": "안전교육·위기관리",
@@ -267,17 +290,33 @@
           ]
         },
         {
-          "name": "긍정심리학·강점기반 상담",
+          "name": "RTI (중재반응모형)",
+          "years": [2021],
+          "description": "학습부진 학생을 위한 다층적 지원 체제로, 1단계 보편적 교수, 2단계 소집단 보충지도, 3단계 집중적 개별 지원의 3단계로 구성된다.",
+          "references": [
+            { "title": "Wikipedia: Response to intervention", "url": "https://en.wikipedia.org/wiki/Response_to_intervention" }
+          ]
+        },
+        {
+          "name": "긍정심리학 (Seligman)",
           "years": [2023],
-          "description": "Seligman의 긍정심리학에 기반하여 학생의 강점과 잠재력에 초점을 맞추는 상담 접근이다. 문제 중심이 아닌 강점 중심으로 학생의 대인관계 능력과 회복탄력성을 향상시킨다.",
+          "description": "Seligman의 PERMA 모델(긍정 정서, 몰입, 관계, 의미, 성취)을 통해 인간의 행복과 웰빙을 설명하며, 문제보다 강점과 잠재력에 주목하는 심리학적 관점이다.",
           "references": [
             { "title": "위키백과: 긍정심리학", "url": "https://ko.wikipedia.org/wiki/%EA%B8%8D%EC%A0%95%EC%8B%AC%EB%A6%AC%ED%95%99" }
           ]
         },
         {
+          "name": "강점기반 상담",
+          "years": [2023],
+          "description": "학생의 강점과 성공 경험에 초점을 맞추어 자기효능감과 내적 동기를 촉진하는 상담 접근이다. 긍정심리학에 기반하되 상담 실천 차원의 독자적 방법론을 갖는다.",
+          "references": [
+            { "title": "Wikipedia: Strengths-based practice", "url": "https://en.wikipedia.org/wiki/Strengths-based_practice" }
+          ]
+        },
+        {
           "name": "해결중심 단기상담(SFBT)",
           "years": [2023],
-          "description": "문제의 원인보다 해결의 가능성과 예외 상황, 성공 경험에 초점을 맞추는 상담 접근이다. 기적 질문, 예외 질문, 척도 질문 등을 통해 학생이 자신의 강점으로 실현 가능한 목표를 세우도록 돕는다.",
+          "description": "de Shazer와 Insoo Kim Berg가 개발한 상담 모형으로, 문제의 원인보다 해결의 가능성과 예외 상황, 성공 경험에 초점을 맞추는 상담 접근이다. 기적 질문, 예외 질문, 척도 질문 등을 통해 학생이 자신의 강점으로 실현 가능한 목표를 세우도록 돕는다.",
           "references": [
             { "title": "Wikipedia: Solution-focused brief therapy", "url": "https://en.wikipedia.org/wiki/Solution-focused_brief_therapy" }
           ]
@@ -301,7 +340,7 @@
         {
           "name": "학교조직문화",
           "years": [2018],
-          "description": "학교 구성원들이 공유하는 가치, 신념, 행동 양식의 총체이다. 협력적 문화, 개인주의 문화, 인위적 협동 문화 등으로 유형화되며, 긍정적 조직문화가 교육의 질 향상에 기여한다.",
+          "description": "학교 구성원들이 공유하는 가치, 신념, 행동 양식의 총체이다. 협력적 문화, 개인주의 문화, 인위적 협동 문화 등으로 유형화되며, 긍정적 조직문화가 교육의 질 향상에 기여한다. Hargreaves는 개인주의 문화, 인위적 협동 문화, 발칸화 문화, 자연적 협동 문화로 유형화하였다.",
           "references": [
             { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" }
           ]
@@ -334,7 +373,7 @@
         {
           "name": "교사리더십",
           "years": [2020],
-          "description": "공식적 직위 없이도 교사가 동료 교사, 학생, 학부모, 학교 공동체에 발휘하는 영향력이다. 수업 전문성, 동료 협력, 학교 의사결정 참여, 전문적 학습공동체 운영 등의 역량을 포함한다.",
+          "description": "York-Barr와 Duke(2004)가 체계화한 개념으로, 공식적 직위 없이도 교사가 동료 교사, 학생, 학부모, 학교 공동체에 발휘하는 영향력이다. 수업 전문성, 동료 협력, 학교 의사결정 참여, 전문적 학습공동체 운영 등의 역량을 포함한다.",
           "references": [
             { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" }
           ]
@@ -349,7 +388,7 @@
         },
         {
           "name": "Kounin 예방적 학급경영",
-          "years": [2025],
+          "years": [2016, 2025],
           "description": "교실의 문제행동을 사후 통제보다 수업 운영과 환경 조성으로 예방해야 한다는 관점이다. 상황파악력(withitness), 수업 흐름 유지, 동시처리(overlapping) 등이 핵심 요소이다.",
           "references": [
             { "title": "한국교육학술정보원(KERIS)", "url": "https://www.keris.or.kr" }
@@ -431,7 +470,7 @@
       "format": "대화형",
       "scoring": { "content": 15, "structure": 5 },
       "subQuestions": 3,
-      "keyTheories": ["2015 개정 교육과정", "협동학습 (STAD)", "정의적 영역 평가", "Johnson & Johnson 사회적 상호의존 이론"],
+      "keyTheories": ["2015 개정 교육과정", "STAD 모형 (Slavin)", "직소(Jigsaw) 모형 (Aronson)", "정의적 영역 평가", "Johnson & Johnson 사회적 상호의존 이론"],
       "keywords": ["핵심역량", "핵심개념", "STAD", "정의적 평가", "과정 중심 평가"],
       "detail": "2015 개정 교육과정의 교수·학습 핵심 요점, 협동학습(STAD)의 보상 체계와 기여, 정의적 능력 평가의 중요성과 방법을 논술하게 한다. 2017학년도부터 내용 15점·체계 5점으로 배점이 변경되었다."
     },
@@ -479,7 +518,7 @@
       "format": "대화형",
       "scoring": { "content": 15, "structure": 5 },
       "subQuestions": 3,
-      "keyTheories": ["교육과정 3단계 개발 모형", "2015 개정 교육과정", "학교중심 교육과정 개발(SBCD)", "Vygotsky ZPD·스캐폴딩", "RTI"],
+      "keyTheories": ["교육과정 3단계 개발 모형", "2015 개정 교육과정", "학교중심 교육과정 개발(SBCD)", "Vygotsky 근접발달영역(ZPD)", "RTI (중재반응모형)"],
       "keywords": ["학교 수준 교육과정", "교사 자율성", "학습 부진", "내용 재구성"],
       "detail": "학교 수준 교육과정 운영의 근거와 교사 역할, 교육과정 개발 시 인적·물적 자원 고려사항, 학습 부진 원인과 해소 방안을 논술하게 한다. 2021학년도부터 답안지 2매 형식으로 변경되었다."
     },
@@ -503,7 +542,7 @@
       "format": "대화형",
       "scoring": { "content": 15, "structure": 5 },
       "subQuestions": 3,
-      "keyTheories": ["긍정심리학·강점기반 상담", "해결중심 단기상담(SFBT)", "사회정서학습(SEL)"],
+      "keyTheories": ["긍정심리학 (Seligman)", "강점기반 상담", "해결중심 단기상담(SFBT)", "사회정서학습(SEL)"],
       "keywords": ["대인관계", "협력체계", "강점 발견", "상담 목표 설정", "학부모·지역사회 연계"],
       "detail": "학교장·학부모·지역 상담사의 지원 방안, 학생 강점 발견과 대인관계 긍정적 영향, 상담 목표 설정 고려사항과 기대 효과를 논술하게 한다."
     },
@@ -539,19 +578,19 @@
       "format": "대화형",
       "scoring": { "content": 15, "structure": 5 },
       "subQuestions": 4,
-      "keyTheories": ["평가의 타당도", "루브릭 (채점기준표)", "나선형 교육과정(Bruner)", "정교화 이론(Reigeluth)", "Anderson & Krathwohl 개정 Bloom 분류학"],
+      "keyTheories": ["평가의 타당도", "루브릭 (채점기준표)", "Tyler 교육과정 설계 모형", "백워드 설계 (Wiggins & McTighe)", "나선형 교육과정(Bruner)", "정교화 이론(Reigeluth)", "Anderson & Krathwohl 개정 Bloom 분류학"],
       "keywords": ["단원 설계", "학습 내용 선정·조직", "타당도", "선택형·서술형", "루브릭", "자기 평가"],
       "detail": "단원 설계의 목적과 학습 내용 선정·조직 고려사항, 수행평가 타당도 문제와 해결, 선택형·서술형 문항의 장단점, 루브릭의 교사·학생 측면 역할을 논술하게 한다."
     }
   ],
   "statistics": {
     "domainDistribution": [
-      { "domain": "교육과정", "domainId": "curriculum", "count": 3, "years": [2021, 2022, 2024] },
-      { "domain": "교수학습", "domainId": "teaching", "count": 2, "years": [2016, 2017] },
-      { "domain": "교육평가", "domainId": "assessment", "count": 1, "years": [2026] },
-      { "domain": "생활지도·상담", "domainId": "guidance", "count": 3, "years": [2015, 2019, 2023] },
-      { "domain": "학교경영", "domainId": "management", "count": 3, "years": [2018, 2020, 2025] },
-      { "domain": "교직전문성", "domainId": "professionalism", "count": 0, "years": [] }
+      { "domain": "교육과정", "domainId": "curriculum", "count": 7, "years": [2017, 2018, 2019, 2021, 2022, 2024, 2026] },
+      { "domain": "교수학습", "domainId": "teaching", "count": 3, "years": [2016, 2017, 2021] },
+      { "domain": "교육평가", "domainId": "assessment", "count": 3, "years": [2017, 2024, 2026] },
+      { "domain": "생활지도·상담", "domainId": "guidance", "count": 5, "years": [2015, 2018, 2019, 2021, 2023] },
+      { "domain": "학교경영", "domainId": "management", "count": 4, "years": [2016, 2018, 2020, 2025] },
+      { "domain": "교직전문성", "domainId": "professionalism", "count": 3, "years": [2016, 2018, 2021] }
     ],
     "formatDistribution": {
       "dialogue": { "count": 11, "percentage": 91.7, "years": [2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025, 2026] },
