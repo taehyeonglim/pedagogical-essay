@@ -208,6 +208,7 @@ export default function PracticePage() {
   const [viewingEntry, setViewingEntry] = useState<HistoryEntry | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [confirmingGiveUp, setConfirmingGiveUp] = useState(false);
+  const [ocrLoading, setOcrLoading] = useState(false);
   const [gradingMsgIndex, setGradingMsgIndex] = useState(0);
   const [lockedEssay, setLockedEssay] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -418,6 +419,74 @@ export default function PracticePage() {
     [startTimer]
   );
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleOcrUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    const maxFiles = 2;
+    const maxSizePerFile = 5 * 1024 * 1024;
+
+    const selected = Array.from(files).slice(0, maxFiles);
+
+    for (const file of selected) {
+      if (!allowedTypes.includes(file.type)) {
+        setErrorMessage("JPEG, PNG, WebP 형식의 이미지만 지원합니다.");
+        return;
+      }
+      if (file.size > maxSizePerFile) {
+        setErrorMessage(`${file.name}: 5MB를 초과합니다.`);
+        return;
+      }
+    }
+
+    setOcrLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const images = await Promise.all(
+        selected.map(
+          (file) =>
+            new Promise<{ data: string; mimeType: string }>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                const result = reader.result as string;
+                const base64 = result.split(",")[1];
+                resolve({ data: base64, mimeType: file.type });
+              };
+              reader.onerror = () => reject(new Error("파일 읽기 실패"));
+              reader.readAsDataURL(file);
+            })
+        )
+      );
+
+      const res = await fetch("/api/ocr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ images }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => null);
+        throw new Error(typeof error?.error === "string" ? error.error : "손글씨 인식 실패");
+      }
+
+      const { text } = await res.json();
+      if (typeof text === "string" && text.trim()) {
+        setEssay((prev) => (prev ? prev + "\n\n" + text : text));
+      } else {
+        setErrorMessage("이미지에서 텍스트를 인식하지 못했습니다.");
+      }
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "손글씨 인식에 실패했습니다.");
+    } finally {
+      setOcrLoading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   const handleSubmit = () => {
     if (!question || loading) return;
     const essayToSubmit = lockedEssay ?? essay;
@@ -595,10 +664,33 @@ export default function PracticePage() {
           difficulty={question.difficulty}
         />
 
+        <div className="flex items-center gap-3">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            onChange={handleOcrUpload}
+            disabled={isLocked || ocrLoading}
+            className="hidden"
+            id="ocr-upload"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLocked || ocrLoading}
+            className="rounded-lg border border-stone-200 px-4 py-2 text-sm text-stone-600 transition hover:border-emerald-300 hover:bg-emerald-50/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 disabled:opacity-50"
+          >
+            {ocrLoading ? "손글씨 인식 중..." : "사진으로 답안 입력"}
+          </button>
+          <span className="text-xs text-stone-400">
+            손글씨 답안지 사진을 업로드하면 AI가 텍스트로 변환합니다 (최대 2장)
+          </span>
+        </div>
+
         <textarea
           value={essay}
           onChange={(e) => setEssay(e.target.value)}
-          placeholder="여기에 논술을 작성하세요..."
+          placeholder="여기에 논술을 작성하거나, 위 버튼으로 손글씨 사진을 업로드하세요..."
           disabled={isLocked}
           className="min-h-[60vh] w-full rounded-xl border border-stone-200 bg-white p-6 text-sm leading-relaxed focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
         />
