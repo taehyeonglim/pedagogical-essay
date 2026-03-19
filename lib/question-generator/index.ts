@@ -5,9 +5,9 @@ import { getAllExams, getExamPatterns, getAnalysis } from "@/lib/knowledge-base"
 import type { GeneratedQuestion, ExamPaper, AnalysisData, AnalysisDomain, QuestionDifficulty } from "@/lib/types";
 
 const DIFFICULTY_GUIDE: Record<string, string> = {
-  basic: "단일 이론 적용, 직접적 질문. 이론의 개념과 특징을 학교 현장 사례에 적용하는 수준.",
-  standard: "2개 이론 비교·적용. 이론 간 공통점·차이점 분석 + 현장 적용 개선 방안 제시.",
-  advanced: "3개 이론 융합, 비판적 분석 + 대안 제시. 복합 영역 출제 가능.",
+  basic: "1~2개 이론이 자연스럽게 녹아든 단순한 현장 상황. 교사 대화에서 문제 상황이 명확히 드러남.",
+  standard: "2~3개 이론이 복합적으로 관련된 현장 상황. 교사마다 다른 접근 방식을 보여 비교·분석이 필요.",
+  advanced: "3개 이상 이론이 얽힌 복합적 현장 상황. 여러 영역(교육과정, 평가, 학급경영 등)이 교차하며 비판적 분석과 대안 제시 요구.",
 };
 
 function selectDomain(
@@ -98,13 +98,13 @@ function buildPrompt(
     : "(해당 영역 기출 없음)";
 
   return `당신은 초등학교 임용시험 교직논술 출제 전문가입니다.
-아래 교육학 이론과 기출 패턴을 **반드시** 활용하여 문제를 출제하세요.
+실제 기출문제의 출제 스타일을 정확히 재현하세요.
 
 ## 출제 영역: ${domain.name}
-이 영역의 핵심 이론:
+이 영역에서 수험생이 알아야 할 이론 (출제 시 참고용, 문항에 직접 언급 금지):
 ${theoriesList}
 
-## 12개년 출제 패턴
+## 12개년 기출 분석 결과
 - 영역별 출제 빈도: ${domainFreq}
 - 형식: 대화형 ${stats.formatDistribution.dialogue.percentage}% / 보고서형 ${stats.formatDistribution.report.percentage}%
 - 배점: 내용 ${patterns.scoringSystem.breakdown.content.score}점 + 체계 ${patterns.scoringSystem.breakdown.structure.score}점 = 총 ${patterns.scoringSystem.totalScore}점
@@ -120,13 +120,24 @@ ${recentEmphasis}
 ## 실제 기출문제 예시
 ${sampleExamText}
 
+## 출제의 핵심 원칙: 현장적합성
+
+실제 기출문제 12개년을 분석한 결과, 다음 패턴이 확인되었습니다:
+- 하위 문항에서 이론명·학자명을 **직접 언급한 경우는 12년간 단 1건** (2017 STAD)
+- 전체 문항의 87.5%는 **학교 현장 시나리오를 제시하고 분석·개선 방안을 묻는 형식**
+- 이론은 제시문의 **교사 대화 속에 자연스럽게 체현**되며, 수험생이 스스로 파악하여 적용
+
+따라서 다음을 **반드시** 지키세요:
+
 ## 출제 요구사항
-1. 위 이론 중 2~3개를 **반드시** 포함
-2. 대화형 제시문: 3~5명 교사가 학교 현장 사례 논의
-3. 하위 문항 3~4개, 각 배점 명시 (합계 15점)
-4. 각 문항은 이론 적용·분석·개선 방안 중 하나 요구
-5. 난이도: ${difficulty} — ${DIFFICULTY_GUIDE[difficulty]}
-6. 답안지 2매 이내 분량
+1. **문항에 이론명·학자명을 직접 쓰지 마세요.** "XXX 이론의 관점에서", "XXX에 따르면" 같은 표현 금지. 대신 "김 교사의 상황에서 나타난 문제점", "박 교사가 제안한 방법의 교육적 의의" 같이 시나리오 기반으로 물으세요.
+2. 제시문 대화에서 교사들이 이론을 **행동·발언으로 체현**하게 하세요. 예: 교사가 "학생 수준에 맞춰 단계별 힌트를 제공했다"고 말하면, 수험생이 이것을 ZPD/스캐폴딩으로 파악해야 합니다.
+3. 대화형 제시문: 3~5명 교사가 **구체적인 학교 현장 사례**를 논의 (학생 이름, 수업 상황, 학교 맥락 등 구체적으로)
+4. 하위 문항 3~4개, 각 배점 명시 (합계 15점)
+5. 각 문항은 **현장 상황 분석, 원인 진단, 개선 방안 제시, 교육적 의의 설명** 등을 요구
+6. 난이도: ${difficulty} — ${DIFFICULTY_GUIDE[difficulty]}
+7. 답안지 2매 이내 분량
+8. "평가의 타당도 측면에서", "선다형 문항의 장단점" 같은 **교육학 일반 용어**는 사용 가능하나, **특정 학자명이나 이론 고유명칭**은 문항에 넣지 마세요.
 
 다음 JSON 형식으로 응답하세요:
 {
@@ -139,7 +150,7 @@ ${sampleExamText}
     "wordLimit": 1200
   },
   "difficulty": "${difficulty}",
-  "targetTheories": ["출제에 활용된 이론명"],
+  "targetTheories": ["제시문에 암묵적으로 녹아든 이론명 (문항에는 미언급이나 채점 시 참조용)"],
   "targetDomain": "${domain.name}",
   "examFormat": {
     "title": "20XX학년도 초등학교 교직논술",
